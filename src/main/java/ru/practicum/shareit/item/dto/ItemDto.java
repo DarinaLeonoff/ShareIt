@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -11,8 +12,12 @@ import lombok.Data;
 @Valid
 public class ItemDto {
     private long id;
-    @NotNull(message = "Необходимо указать название вещи.")
+    @NotNull
+    @NotBlank
     private String name;
+    @NotNull
+    @NotBlank
     private String description;
-    private boolean available = true;
+    @NotNull
+    private Boolean available;
 }
