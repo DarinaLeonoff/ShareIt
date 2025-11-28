@@ -19,17 +19,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User editUser(User user, long userId) {
-        return null;
+        return userRepository.editUser(user, userId);
     }
 
     @Override
     public User getUser(long userId) {
-        return null;
+        return userRepository.getUser(userId);
     }
 
     @Override
     public void removeUser(long userId) {
-
+        userRepository.removeUser(userId);
     }
 
 

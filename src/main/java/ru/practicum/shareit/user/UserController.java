@@ -1,12 +1,10 @@
 package ru.practicum.shareit.user;
 
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * TODO Sprint add-controllers.
@@ -20,8 +18,26 @@ public class UserController {
     @PostMapping
     public User createUser(@Valid @RequestBody User user){
         log.info("Creating new user");
-        user = userService.createUser(user);
-        return user;
+        return userService.createUser(user);
+    }
+
+    @PatchMapping("/{userId}")
+    public User editUser(@RequestBody User user,
+                         @PathVariable long userId){
+        log.info("Updating user");
+        return userService.editUser(user, userId);
+    }
+
+    @GetMapping("/{userId}")
+    public User getUser(@PathVariable long userId){
+        log.info("Getting user by id = {}", userId);
+        return userService.getUser(userId);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void removeUser(@PathVariable long userId){
+        log.info("Remove user by id = {}", userId);
+        userService.removeUser(userId);
     }
 
 }
