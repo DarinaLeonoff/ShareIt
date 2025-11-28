@@ -24,4 +24,19 @@ public class ItemMapper {
         item.setOwnerId(ownerId);
         return item;
     }
+
+    public static Item updateItem(Item item, ItemDto dto){
+        if(dto.getName() != null && !dto.getName().isBlank()){
+            item.setName(dto.getName());
+        }
+
+        if(dto.getDescription() != null && !dto.getDescription().isBlank()) {
+            item.setDescription(dto.getDescription());
+        }
+
+        if(dto.getAvailable() != null) {
+            item.setAvailable(dto.getAvailable());
+        }
+        return item;
+    }
 }

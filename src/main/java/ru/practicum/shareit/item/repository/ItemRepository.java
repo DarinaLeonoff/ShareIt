@@ -7,5 +7,6 @@ import java.util.List;
 public interface ItemRepository {
     ItemDto createItem(long userId, ItemDto itemDto);
     List<ItemDto> getAllUserItems(long userId);
-    ItemDto editItem(long userId, ItemDto itemDto);
+    ItemDto getItemById(long itemId);
+    ItemDto editItem(long userId, ItemDto itemDto, long itemId);
 }

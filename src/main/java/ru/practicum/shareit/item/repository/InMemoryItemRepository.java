@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -28,12 +29,24 @@ public class InMemoryItemRepository implements ItemRepository {
 
     @Override
     public List<ItemDto> getAllUserItems(long userId) {
-        return null;
+        return itemsRepository.values().stream().filter(i -> i.getOwnerId() == userId).map(ItemMapper::mapToDto).toList();
     }
 
     @Override
-    public ItemDto editItem(long userId, ItemDto itemDto) {
-        return null;
+    public ItemDto getItemById(long itemId) {
+        return ItemMapper.mapToDto(itemsRepository.get(itemId));
+    }
+
+    @Override
+    public ItemDto editItem(long userId, ItemDto itemDto, long itemId) {
+        Item item = itemsRepository.get(itemId);
+        if(item.getOwnerId() != userId){
+            log.warn("User {} is not owner", userId);
+            throw new NotFoundException("User is not owner");
+        }
+        Item newItem = ItemMapper.updateItem(item, itemDto);
+        itemsRepository.put(itemId, newItem);
+        return ItemMapper.mapToDto(newItem);
     }
 
    private long generateId(){

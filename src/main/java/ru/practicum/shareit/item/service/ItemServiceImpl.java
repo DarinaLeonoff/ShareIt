@@ -26,11 +26,16 @@ public class ItemServiceImpl implements ItemService{
 
     @Override
     public List<ItemDto> getAllUserItems(long userId) {
-        return null;
+        return itemRepository.getAllUserItems(userId);
     }
 
     @Override
-    public ItemDto editItem(long userId, ItemDto itemDto) {
-        return null;
+    public ItemDto getItemById(long itemId){
+        return itemRepository.getItemById(itemId);
+    }
+
+    @Override
+    public ItemDto editItem(long userId, ItemDto itemDto, long itemId) {
+        return itemRepository.editItem(userId, itemDto, itemId);
     }
 }

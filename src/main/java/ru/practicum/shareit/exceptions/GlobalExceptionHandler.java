@@ -30,5 +30,4 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleNotFound(final NotFoundException e) {
         return new ErrorResponse("Candidates not found.", e.getMessage());
     }
-
 }
