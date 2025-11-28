@@ -1,22 +1,19 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.repository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.AlreadyExistsException;
+import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.model.User;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Repository
 @Qualifier("inMemoryRepo")
-@RequiredArgsConstructor
 public class InMemoryUserRepository implements UserRepository{
-    private final Map<Long, User> usersStorage;
+    private final Map<Long, User> usersStorage = new HashMap<>();
 
     private long maxId = 0;
 
@@ -33,6 +30,7 @@ public class InMemoryUserRepository implements UserRepository{
     @Override
     public User editUser(User user, long userId) {
         User oldUser = usersStorage.get(userId);
+
         if (user.getEmail() == null){
             user.setEmail(oldUser.getEmail());
         }
@@ -52,7 +50,7 @@ public class InMemoryUserRepository implements UserRepository{
     public User getUser(long id) {
         if(!usersStorage.containsKey(id)){
             log.debug("Id {} wasn't found in memory.", id);
-            throw new NoSuchElementException("User with id = " + id+" not found.");
+            throw new NotFoundException("User with id = " + id+" not found.");
         }
         return usersStorage.get(id);
     }
@@ -70,7 +68,7 @@ public class InMemoryUserRepository implements UserRepository{
         List<User> users = usersStorage.values().stream().filter(u -> u.getEmail().equals(email)).toList();
         if(users.size() > 0){
             log.warn("Try to add new user with existing email");
-            throw new ValidationException("Email was already exist.");
+            throw new AlreadyExistsException("Email already exist.");
         }
     }
 }

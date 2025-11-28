@@ -1,0 +1,42 @@
+package ru.practicum.shareit.item.repository;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@Qualifier("inMemoryRepo")
+@Repository
+public class InMemoryItemRepository implements ItemRepository {
+    private final Map<Long, Item> itemsRepository = new HashMap<>();
+    private long maxId = 0;
+
+    @Override
+    public ItemDto createItem(long userId, ItemDto itemDto) {
+        Item item = ItemMapper.mapToItem(itemDto, userId);
+        item.setId(generateId());
+        itemsRepository.put(item.getId(), item);
+        return ItemMapper.mapToDto(item);
+    }
+
+    @Override
+    public List<ItemDto> getAllUserItems(long userId) {
+        return null;
+    }
+
+    @Override
+    public ItemDto editItem(long userId, ItemDto itemDto) {
+        return null;
+    }
+
+   private long generateId(){
+        return ++maxId;
+   }
+}

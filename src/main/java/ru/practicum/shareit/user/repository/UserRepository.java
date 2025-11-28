@@ -1,6 +1,6 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.repository;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import ru.practicum.shareit.user.model.User;
 
 public interface UserRepository {
     User createUser(User user);
