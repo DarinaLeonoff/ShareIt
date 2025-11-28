@@ -9,4 +9,5 @@ public interface ItemRepository {
     List<ItemDto> getAllUserItems(long userId);
     ItemDto getItemById(long itemId);
     ItemDto editItem(long userId, ItemDto itemDto, long itemId);
+    List<ItemDto> search(String text);
 }

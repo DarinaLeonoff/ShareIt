@@ -8,9 +8,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Qualifier("inMemoryRepo")
@@ -49,7 +47,20 @@ public class InMemoryItemRepository implements ItemRepository {
         return ItemMapper.mapToDto(newItem);
     }
 
-   private long generateId(){
+    @Override
+    public List<ItemDto> search(String text) {
+        if(text == null || text.isEmpty()){
+            return new ArrayList<>();
+        }
+        String lowText = text.toLowerCase();
+        return itemsRepository.values().stream()
+                .filter(i ->
+                        (i.getName().toLowerCase().contains(lowText) || i.getDescription().toLowerCase().contains(lowText))
+                                && i.isAvailable())
+                .map(ItemMapper::mapToDto).toList();
+    }
+
+    private long generateId(){
         return ++maxId;
    }
 }

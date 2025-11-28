@@ -47,12 +47,10 @@ public class ItemController {
         return itemService.editItem(userId, itemDto, itemId);
     }
 
-    @GetMapping("/items/search")
-    public List<ItemDto> searchItems (@PathParam("text") String text){
-        log.info("Method not ready to work");
+    @GetMapping("/search")
+    public List<ItemDto> searchItems (@RequestParam("text") String text){
         log.info("Getting items by request: {}", text);
-        //only available items
-        return null;
+        return itemService.search(text);
     }
 
 

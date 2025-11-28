@@ -38,4 +38,9 @@ public class ItemServiceImpl implements ItemService{
     public ItemDto editItem(long userId, ItemDto itemDto, long itemId) {
         return itemRepository.editItem(userId, itemDto, itemId);
     }
+
+    @Override
+    public List<ItemDto> search(String text) {
+        return itemRepository.search(text);
+    }
 }
