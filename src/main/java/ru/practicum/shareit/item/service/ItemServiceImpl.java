@@ -14,10 +14,12 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
+
     @Qualifier("inMemoryRepo")
     private final ItemRepository itemRepository;
     private final UserService userService;
+
     @Override
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User user = userService.getUser(userId);
@@ -30,7 +32,7 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public ItemDto getItemById(long itemId){
+    public ItemDto getItemById(long itemId) {
         return itemRepository.getItemById(itemId);
     }
 

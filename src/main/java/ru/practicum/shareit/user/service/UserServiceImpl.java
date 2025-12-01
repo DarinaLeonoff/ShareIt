@@ -10,7 +10,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Qualifier("inMemoryRepo")
     private final UserRepository userRepository;
 

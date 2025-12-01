@@ -12,7 +12,7 @@ import java.util.*;
 @Slf4j
 @Repository
 @Qualifier("inMemoryRepo")
-public class InMemoryUserRepository implements UserRepository{
+public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> usersStorage = new HashMap<>();
 
     private long maxId = 0;
@@ -31,13 +31,13 @@ public class InMemoryUserRepository implements UserRepository{
     public User editUser(User user, long userId) {
         User oldUser = usersStorage.get(userId);
 
-        if (user.getEmail() == null){
+        if (user.getEmail() == null) {
             user.setEmail(oldUser.getEmail());
         }
-        if(!user.getEmail().equals(oldUser.getEmail())){
+        if (!user.getEmail().equals(oldUser.getEmail())) {
             checkEmail(user.getEmail());
         }
-        if(user.getName() == null){
+        if (user.getName() == null) {
             user.setName(oldUser.getName());
         }
         user.setId(userId);
@@ -48,9 +48,9 @@ public class InMemoryUserRepository implements UserRepository{
 
     @Override
     public User getUser(long id) {
-        if(!usersStorage.containsKey(id)){
+        if (!usersStorage.containsKey(id)) {
             log.debug("Id {} wasn't found in memory.", id);
-            throw new NotFoundException("User with id = " + id+" not found.");
+            throw new NotFoundException("User with id = " + id + " not found.");
         }
         return usersStorage.get(id);
     }
@@ -60,13 +60,13 @@ public class InMemoryUserRepository implements UserRepository{
         usersStorage.remove(id);
     }
 
-    private long generateId(){
+    private long generateId() {
         return ++maxId;
     }
 
-    private void checkEmail(String email){
+    private void checkEmail(String email) {
         List<User> users = usersStorage.values().stream().filter(u -> u.getEmail().equals(email)).toList();
-        if(users.size() > 0){
+        if (!users.isEmpty()) {
             log.warn("Try to add new user with existing email");
             throw new AlreadyExistsException("Email already exist.");
         }

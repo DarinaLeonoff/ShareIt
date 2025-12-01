@@ -8,7 +8,10 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Qualifier("inMemoryRepo")
@@ -38,7 +41,7 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public ItemDto editItem(long userId, ItemDto itemDto, long itemId) {
         Item item = itemsRepository.get(itemId);
-        if(item.getOwnerId() != userId){
+        if (item.getOwnerId() != userId) {
             log.warn("User {} is not owner", userId);
             throw new NotFoundException("User is not owner");
         }
@@ -49,18 +52,14 @@ public class InMemoryItemRepository implements ItemRepository {
 
     @Override
     public List<ItemDto> search(String text) {
-        if(text == null || text.isEmpty()){
+        if (text == null || text.isEmpty()) {
             return new ArrayList<>();
         }
         String lowText = text.toLowerCase();
-        return itemsRepository.values().stream()
-                .filter(i ->
-                        (i.getName().toLowerCase().contains(lowText) || i.getDescription().toLowerCase().contains(lowText))
-                                && i.isAvailable())
-                .map(ItemMapper::mapToDto).toList();
+        return itemsRepository.values().stream().filter(i -> (i.getName().toLowerCase().contains(lowText) || i.getDescription().toLowerCase().contains(lowText)) && i.isAvailable()).map(ItemMapper::mapToDto).toList();
     }
 
-    private long generateId(){
+    private long generateId() {
         return ++maxId;
-   }
+    }
 }
