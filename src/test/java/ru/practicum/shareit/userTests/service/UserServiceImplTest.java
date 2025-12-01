@@ -21,7 +21,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void createAndGetUserTest(){
+    void createAndGetUserTest() {
         User user = userService.createUser(Generators.generateUser(1L));
         User getUser = userService.getUser(user.getId());
 
@@ -29,7 +29,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void editUserTest(){
+    void editUserTest() {
         User user = userService.createUser(Generators.generateUser(1L));
         User userForUpdate = Generators.generateUser(user.getId());
 
@@ -38,7 +38,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void removeUserTest(){
+    void removeUserTest() {
         User user = userService.createUser(Generators.generateUser(1L));
         userService.removeUser(user.getId());
 
