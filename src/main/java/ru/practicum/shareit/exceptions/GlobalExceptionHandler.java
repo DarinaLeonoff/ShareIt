@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.Objects;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -14,7 +16,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleValidation(final MethodArgumentNotValidException e) {
-        return new ErrorResponse("Not valid.", e.getFieldError().getDefaultMessage());
+        return new ErrorResponse("Not valid.", Objects.requireNonNull(e.getFieldError()).getDefaultMessage());
     }
 
     @ExceptionHandler(AlreadyExistsException.class)

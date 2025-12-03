@@ -89,7 +89,7 @@ public class ItemServiceImplTest {
             itemService.createItem(user.getId(), Generators.generateDto(1L));
         }
         String text = "text";
-        ItemDto dto = itemService.createItem(2L, Generators.generateDataForSearch(1, text));
+        ItemDto dto = itemService.createItem(2L, Generators.generateItemDtoForSearch(1, text));
 
         List<ItemDto> search = itemService.search(text);
 
@@ -106,17 +106,17 @@ public class ItemServiceImplTest {
              i++) {
             User user = userService.createUser(Generators.generateUser((long) i));
             boolean isText = false;
-            ItemDto dto;
+            ItemDto item;
             if (i == 2 || i == 8) {
-                dto = Generators.generateDataForSearch(1, text);
+                item = Generators.generateItemDtoForSearch(1, text);
                 isText = true;
             } else {
-                dto = Generators.generateDto(1L);
+                item = Generators.generateDto(1L);
             }
             if (i > 5) {
-                dto.setAvailable(false);
+                item.setAvailable(false);
             }
-            ItemDto created = itemService.createItem(user.getId(), dto);
+            ItemDto created = itemService.createItem(user.getId(), item);
             if (isText) {
                 id.add(created.getId());
             }

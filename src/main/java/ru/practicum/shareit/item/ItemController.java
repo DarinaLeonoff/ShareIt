@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -22,13 +23,13 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @Valid @RequestBody ItemDto itemDto) {
         log.info("Post new item. Item is {}, owner id is {}", itemDto.getName(), userId);
         return itemService.createItem(userId, itemDto);
     }
 
     @GetMapping
-    public List<ItemDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllUserItems(@RequestHeader(Constants.USER_ID_HEADER) Long userId) {
         log.info("Getting all items for user with id = {}", userId);
         return itemService.getAllUserItems(userId);
     }
@@ -40,7 +41,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto editItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto, @PathVariable long itemId) {
+    public ItemDto editItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @RequestBody ItemDto itemDto, @PathVariable long itemId) {
         log.info("Edit {}, owner id is {}", itemDto.getName(), userId);
         return itemService.editItem(userId, itemDto, itemId);
     }

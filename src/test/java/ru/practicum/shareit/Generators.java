@@ -12,7 +12,6 @@ public class Generators {
         item.setName("Test");
         item.setDescription("Desc");
         item.setAvailable(true);
-        item.setUseCount(0);
         item.setOwnerId(100L);
         return item;
     }
@@ -34,19 +33,35 @@ public class Generators {
         return itemDto;
     }
 
-    public static ItemDto generateDataForSearch(int i, String text) {
-        ItemDto itemDto = new ItemDto();
+    public static Item generateItemForSearch(int i, String text) {
+        Item item = new Item();
         if (i == 1 || i == 3) {
-            itemDto.setName("Dto test name " + text);
+            item.setName("Dto test name " + text);
         } else {
-            itemDto.setName("Dto test name");
+            item.setName("Dto test name");
         }
         if (i == 2 || i == 3) {
-            itemDto.setDescription("Dto test desc " + text);
+            item.setDescription("Dto test desc " + text);
         } else {
-            itemDto.setDescription("Dto test desc");
+            item.setDescription("Dto test desc");
         }
-        itemDto.setAvailable(true);
-        return itemDto;
+        item.setAvailable(true);
+        return item;
+    }
+
+    public static ItemDto generateItemDtoForSearch(int i, String text) {
+        ItemDto item = new ItemDto();
+        if (i == 1 || i == 3) {
+            item.setName("Dto test name " + text);
+        } else {
+            item.setName("Dto test name");
+        }
+        if (i == 2 || i == 3) {
+            item.setDescription("Dto test desc " + text);
+        } else {
+            item.setDescription("Dto test desc");
+        }
+        item.setAvailable(true);
+        return item;
     }
 }

@@ -18,7 +18,6 @@ public class ItemTest {
         assertNull(item.getName());
         assertNull(item.getDescription());
         assertTrue(item.isAvailable());
-        assertEquals(0, item.getUseCount());
         assertEquals(0L, item.getOwnerId());
     }
 
@@ -31,7 +30,6 @@ public class ItemTest {
         item.setName("Test Item");
         item.setDescription("Description of test item");
         item.setAvailable(false);
-        item.setUseCount(5);
         item.setOwnerId(456L);
 
         // Проверяем полученные значения
@@ -39,7 +37,6 @@ public class ItemTest {
         assertEquals("Test Item", item.getName());
         assertEquals("Description of test item", item.getDescription());
         assertFalse(item.isAvailable());
-        assertEquals(5, item.getUseCount());
         assertEquals(456L, item.getOwnerId());
     }
 
@@ -62,7 +59,7 @@ public class ItemTest {
     void testToString() {
         Item item = Generators.generateItem(1L);
 
-        String expected = "Item(id=1, name=Test, description=Desc, available=true, useCount=0, " + "ownerId=100)";
+        String expected = "Item(id=1, name=Test, description=Desc, available=true, " + "ownerId=100)";
         assertEquals(expected, item.toString());
     }
 
