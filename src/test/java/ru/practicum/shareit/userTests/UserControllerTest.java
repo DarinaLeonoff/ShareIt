@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -30,7 +32,7 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
-    private User user;
+    private UserDto user;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -61,13 +63,13 @@ public class UserControllerTest {
     @Test
     void testEditUser() throws Exception {
         // Создаем исходный пользователь
-        User originalUser = Generators.generateUser(1L);
+        UserDto originalUser = Generators.generateUser(1L);
 
         // Мокаем создание пользователя
         when(userService.createUser(originalUser)).thenReturn(originalUser);
 
         // Создаем обновленные данные
-        User updatedUser = new User();
+        UserDto updatedUser = new UserDto();
         updatedUser.setId(originalUser.getId());
         updatedUser.setName("Updated Name");
         updatedUser.setEmail("new-email@example.com");

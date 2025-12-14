@@ -1,15 +1,12 @@
 package ru.practicum.shareit.ItemTests.mapper;
 
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.mapper.ItemMapperUtils;
 import ru.practicum.shareit.item.model.Item;
 
@@ -30,7 +27,8 @@ public class ItemMapperTest {
         long owner = item.getOwnerId();
 
         ItemDto dto = itemMapper.mapToDto(item);
-        Item item2 = itemMapper.mapToItem(dto, owner);
+        Item item2 = itemMapper.mapToItem(dto);
+        item2.setOwnerId(owner);
 
         Assertions.assertEquals(item, item2);
     }

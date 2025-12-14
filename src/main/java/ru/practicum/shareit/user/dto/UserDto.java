@@ -1,27 +1,14 @@
-package ru.practicum.shareit.user.model;
+package ru.practicum.shareit.user.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
-
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * TODO Sprint add-controllers.
- */
 
 @Data
 @Valid
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDto {
     private long id;
 
     @NotNull

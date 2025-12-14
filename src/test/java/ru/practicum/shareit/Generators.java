@@ -2,6 +2,7 @@ package ru.practicum.shareit;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 public class Generators {
@@ -16,8 +17,8 @@ public class Generators {
         return item;
     }
 
-    public static User generateUser(Long i) {
-        User user = new User();
+    public static UserDto generateUser(Long i) {
+        UserDto user = new UserDto();
         user.setId(i);
         user.setName("Test Name " + i);
         user.setEmail("test" + i + "@ya.ru");

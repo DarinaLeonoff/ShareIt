@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.repository.InMemoryItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.InMemoryUserRepository;
 import ru.practicum.shareit.user.service.UserService;
@@ -24,19 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 @RequiredArgsConstructor
 public class ItemServiceImplTest {
-    private ItemService itemService;
-    private UserService userService;
+    private final ItemService itemService;
+    private final UserService userService;
     private ItemMapper itemMapper;
-
-    @BeforeEach
-    void cleanUp() {
-        userService = new UserServiceImpl(new InMemoryUserRepository());
-        itemService = new ItemServiceImpl(new InMemoryItemRepository(), userService, new ItemMapperImpl());
-    }
 
     @Test
     void createAndGetItemTest() {
-        User user = userService.createUser(Generators.generateUser(1L));
+        UserDto user = userService.createUser(Generators.generateUser(1L));
         ItemDto dto = itemService.createItem(user.getId(), Generators.generateDto(1L));
 
         List<ItemDto> dtos = itemService.getAllUserItems(user.getId());
@@ -49,7 +44,7 @@ public class ItemServiceImplTest {
 
     @Test
     void createItemWithWrongUserTest() {
-        User user = userService.createUser(Generators.generateUser(1L));
+        UserDto user = userService.createUser(Generators.generateUser(1L));
 
         assertThrows(NotFoundException.class, () -> {
             itemService.createItem(user.getId() + 1, Generators.generateDto(1L));
@@ -58,7 +53,7 @@ public class ItemServiceImplTest {
 
     @Test
     void updateItemTest() {
-        User user = userService.createUser(Generators.generateUser(1L));
+        UserDto user = userService.createUser(Generators.generateUser(1L));
         ItemDto itemDto = itemService.createItem(user.getId(), Generators.generateDto(1L));
 
         ItemDto dto1 = Generators.generateDto(itemDto.getId());
@@ -74,7 +69,7 @@ public class ItemServiceImplTest {
 
     @Test
     void updateItemWithWrongUserTest() {
-        User user = userService.createUser(Generators.generateUser(1L));
+        UserDto user = userService.createUser(Generators.generateUser(1L));
         ItemDto itemDto = itemService.createItem(user.getId(), Generators.generateDto(1L));
 
         ItemDto dto1 = Generators.generateDto(itemDto.getId());
@@ -90,7 +85,7 @@ public class ItemServiceImplTest {
         for (int i = 0;
              i < 10;
              i++) {
-            User user = userService.createUser(Generators.generateUser((long) i));
+            UserDto user = userService.createUser(Generators.generateUser((long) i));
             itemService.createItem(user.getId(), Generators.generateDto(1L));
         }
         String text = "text";
@@ -109,7 +104,7 @@ public class ItemServiceImplTest {
         for (int i = 0;
              i < 10;
              i++) {
-            User user = userService.createUser(Generators.generateUser((long) i));
+            UserDto user = userService.createUser(Generators.generateUser((long) i));
             boolean isText = false;
             ItemDto item;
             if (i == 2 || i == 8) {

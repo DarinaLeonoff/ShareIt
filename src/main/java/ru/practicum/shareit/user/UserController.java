@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -20,19 +21,19 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User createUser(@Valid @RequestBody User user) {
+    public UserDto createUser(@Valid @RequestBody UserDto user) {
         log.info("Creating new user");
         return userService.createUser(user);
     }
 
     @PatchMapping("/{userId}")
-    public User editUser(@RequestBody User user, @PathVariable long userId) {
+    public UserDto editUser(@RequestBody UserDto user, @PathVariable long userId) {
         log.info("Updating user under id {}", userId);
         return userService.editUser(user, userId);
     }
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable long userId) {
+    public UserDto getUser(@PathVariable long userId) {
         log.info("Getting user by id = {}", userId);
         return userService.getUser(userId);
     }

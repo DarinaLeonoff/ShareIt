@@ -28,31 +28,19 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User editUser(User user, long userId) {
-        User oldUser = usersStorage.get(userId);
-
-        if (user.getEmail() == null) {
-            user.setEmail(oldUser.getEmail());
-        }
-        if (!user.getEmail().equals(oldUser.getEmail())) {
-            checkEmail(user.getEmail());
-        }
-        if (user.getName() == null) {
-            user.setName(oldUser.getName());
-        }
-        user.setId(userId);
-        usersStorage.put(userId, user);
+    public User editUser(User user) {
+        usersStorage.put(user.getId(), user);
         log.info("User was updated.");
         return user;
     }
 
     @Override
-    public User getUser(long id) {
+    public Optional<User> findById(long id) {
         if (!usersStorage.containsKey(id)) {
             log.debug("Id {} wasn't found in memory.", id);
             throw new NotFoundException("User with id = " + id + " not found.");
         }
-        return usersStorage.get(id);
+        return Optional.of(usersStorage.get(id));
     }
 
     @Override
