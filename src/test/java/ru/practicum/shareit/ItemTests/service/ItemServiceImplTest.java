@@ -1,10 +1,14 @@
 package ru.practicum.shareit.ItemTests.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.mapper.ItemMapperImpl;
 import ru.practicum.shareit.item.repository.InMemoryItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
@@ -18,15 +22,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
+@RequiredArgsConstructor
 public class ItemServiceImplTest {
     private ItemService itemService;
     private UserService userService;
+    private ItemMapper itemMapper;
 
     @BeforeEach
     void cleanUp() {
         userService = new UserServiceImpl(new InMemoryUserRepository());
-        itemService = new ItemServiceImpl(new InMemoryItemRepository(), userService);
+        itemService = new ItemServiceImpl(new InMemoryItemRepository(), userService, new ItemMapperImpl());
     }
 
     @Test

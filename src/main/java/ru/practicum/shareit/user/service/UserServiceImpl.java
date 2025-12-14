@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.model.User;
@@ -9,10 +10,13 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Qualifier("inMemoryRepo")
     private final UserRepository userRepository;
+
+    @Autowired
+    public UserServiceImpl(@Qualifier("inMemoryRepo") UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User createUser(User user) {
@@ -33,6 +37,4 @@ public class UserServiceImpl implements UserService {
     public void removeUser(long userId) {
         userRepository.removeUser(userId);
     }
-
-
 }
