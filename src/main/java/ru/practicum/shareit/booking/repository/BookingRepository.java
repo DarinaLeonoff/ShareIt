@@ -9,4 +9,6 @@ import ru.practicum.shareit.booking.model.Booking;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @EntityGraph(attributePaths = {"status"})
     Booking save(Booking booking);
+
+    Booking findById(long id);
 }
