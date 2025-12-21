@@ -30,4 +30,10 @@ public class BookingController {
         log.info("User by id = {} try to approve({}) item with id = {}", userId, approved, bookingId);
         return bookingService.approveBooking(userId, bookingId, approved);
     }
+
+    @GetMapping("/{bookingId}")
+    public BookingResponseDto getBookingById(@RequestHeader(Constants.USER_ID_HEADER) long userId,
+                                             @PathVariable long bookingId){
+        return bookingService.getBookingById(userId, bookingId);
+    }
 }

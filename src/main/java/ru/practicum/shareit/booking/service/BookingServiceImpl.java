@@ -54,4 +54,12 @@ public class BookingServiceImpl implements BookingService{
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         return mapper.mapBookingToResponseDto(bookingRepository.save(booking));
     }
+
+    public BookingResponseDto getBookingById(long userId, long bookingId){
+        Booking booking = bookingRepository.findById(bookingId);
+        if(booking.getBooker().getId() != userId && booking.getItem().getOwnerId() != userId){
+            throw new WrongRequestException("У пользователя нет прав доступа к информации о бронировании.");
+        }
+        return mapper.mapBookingToResponseDto(booking);
+    }
 }
