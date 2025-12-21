@@ -7,7 +7,10 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.service.BookingState;
 import ru.practicum.shareit.constants.Constants;
+
+import java.util.List;
 
 /**
  * TODO Sprint add-bookings.
@@ -35,5 +38,12 @@ public class BookingController {
     public BookingResponseDto getBookingById(@RequestHeader(Constants.USER_ID_HEADER) long userId,
                                              @PathVariable long bookingId){
         return bookingService.getBookingById(userId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingResponseDto> getAllUserBookings(@RequestHeader(Constants.USER_ID_HEADER) long userId,
+                                                       @RequestParam(defaultValue = "ALL") BookingState state){
+        log.info("Current state = {}", state);
+        return bookingService.getAllUserBooking(userId, state);
     }
 }
