@@ -69,19 +69,33 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public List<BookingResponseDto> getAllUserBooking(long userId, BookingState state) {
         UserDto user = userService.getUser(userId);
+        List<Booking> bookings = bookingRepository.findByBookerId(userId);
+
+        return getListByState(bookings, state);
+    }
+
+    @Override
+    public List<BookingResponseDto> getAllUserItemBooking(long userId, BookingState state) {
+        UserDto user = userService.getUser(userId);
+        List<Booking> bookings = bookingRepository.findAllByOwnerId(userId);
+
+        return getListByState(bookings, state);
+    }
+
+    private List<BookingResponseDto> getListByState(List<Booking> bookings, BookingState state){
         return switch (state){
-            case PAST -> getPast(userId);
-            case FUTURE -> getFuture(userId);
-            case CURRENT -> getCurrent(userId);
-            case WAITING -> getWaiting(userId);
-            case REJECTED -> getRejected(userId);
-            default -> getAll(userId);
+            case PAST -> getPast(bookings);
+            case FUTURE -> getFuture(bookings);
+            case CURRENT -> getCurrent(bookings);
+            case WAITING -> getWaiting(bookings);
+            case REJECTED -> getRejected(bookings);
+            default -> getAll(bookings);
         };
     }
 
-    private List<BookingResponseDto> getPast(long userId){
+    private List<BookingResponseDto> getPast(List<Booking> bookings){
         LocalDateTime cur = LocalDateTime.now();
-        return bookingRepository.findByBookerId(userId).stream()
+        return bookings.stream()
                 .filter(booking -> booking.getStart().isBefore(cur)
                         && booking.getEnd().isBefore(cur)
                         && booking.getStatus().equals(BookingStatus.APPROVED))
@@ -89,33 +103,33 @@ public class BookingServiceImpl implements BookingService{
 
     }
 
-    private List<BookingResponseDto> getFuture(long userId){
+    private List<BookingResponseDto> getFuture(List<Booking> bookings){
         LocalDateTime cur = LocalDateTime.now();
-        return bookingRepository.findByBookerId(userId).stream()
+        return bookings.stream()
                 .filter(booking -> booking.getEnd().isAfter(cur)
                         && booking.getStatus().equals(BookingStatus.APPROVED))
         .map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getCurrent(long userId){
+    private List<BookingResponseDto> getCurrent(List<Booking> bookings){
         LocalDateTime cur = LocalDateTime.now();
-        return bookingRepository.findByBookerId(userId).stream()
+        return bookings.stream()
                 .filter(booking -> booking.getStart().isBefore(cur)
                         && booking.getEnd().isAfter(cur)
                         && booking.getStatus().equals(BookingStatus.APPROVED))
                 .map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getWaiting(long userId){
-        return bookingRepository.findByBookerId(userId).stream().filter(booking -> booking.getStatus().equals(BookingStatus.WAITING)).map(mapper::mapBookingToResponseDto).toList();
+    private List<BookingResponseDto> getWaiting(List<Booking> bookings){
+        return bookings.stream().filter(booking -> booking.getStatus().equals(BookingStatus.WAITING)).map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getRejected(long userId){
-        return bookingRepository.findByBookerId(userId).stream().filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED)).map(mapper::mapBookingToResponseDto).toList();
+    private List<BookingResponseDto> getRejected(List<Booking> bookings){
+        return bookings.stream().filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED)).map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getAll(long userId){
-        return bookingRepository.findByBookerId(userId).stream().map(mapper::mapBookingToResponseDto).toList();
+    private List<BookingResponseDto> getAll(List<Booking> bookings){
+        return bookings.stream().map(mapper::mapBookingToResponseDto).toList();
     }
 
 
