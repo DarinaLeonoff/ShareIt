@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDateDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -18,6 +19,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -80,6 +82,15 @@ public class BookingServiceImpl implements BookingService{
         List<Booking> bookings = bookingRepository.findAllByOwnerId(userId);
 
         return getListByState(bookings, state);
+    }
+
+    @Override
+    public List<BookingDateDto> getLastNextBookingByItemId(long itemId) {
+        List<Booking> bookings = new ArrayList<>();
+        LocalDateTime cur = LocalDateTime.now();
+        bookings.add(bookingRepository.findLastBooking(cur, itemId).orElse(null));
+        bookings.add(bookingRepository.findNextBooking(cur, itemId).orElse(null));
+        return bookings.stream().map(mapper::mapBookingToDateDto).toList();
     }
 
     private List<BookingResponseDto> getListByState(List<Booking> bookings, BookingState state){

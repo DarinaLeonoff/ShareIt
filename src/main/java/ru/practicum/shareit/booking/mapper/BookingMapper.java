@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Qualifier;
+import ru.practicum.shareit.booking.dto.BookingDateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -29,6 +30,10 @@ public interface BookingMapper {
     @Mapping(target = "booker", source = "booking.booker")
     @Mapping(target = "status", source = "status")
     BookingResponseDto mapBookingToResponseDto(Booking booking);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "start", source = "start")
+    BookingDateDto mapBookingToDateDto(Booking booking);
 
     @Qualifier
     @Target(ElementType.METHOD)

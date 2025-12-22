@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
+import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
+    private final ItemBookingService itemBookingService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,9 +32,9 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAllUserItems(@RequestHeader(Constants.USER_ID_HEADER) Long userId) {
+    public List<ItemWithBookingDto> getAllUserItems(@RequestHeader(Constants.USER_ID_HEADER) Long userId) {
         log.info("Getting all items for user with id = {}", userId);
-        return itemService.getAllUserItems(userId);
+        return itemBookingService.getAllUserItems(userId);
     }
 
     @GetMapping("/{itemId}")

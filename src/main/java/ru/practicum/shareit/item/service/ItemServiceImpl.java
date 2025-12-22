@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.mapper.ItemMapperUtils;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
@@ -37,11 +37,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemMapper.mapToItem(itemDto);
         item.setOwnerId(userId);
         return itemMapper.mapToDto(itemRepository.saveItem(item));
-    }
-
-    @Override
-    public List<ItemDto> getAllUserItems(long userId) {
-        return itemRepository.findByOwnerId(userId).stream().map(itemMapper::mapToDto).toList();
     }
 
     @Override

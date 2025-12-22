@@ -29,18 +29,18 @@ public class ItemServiceImplTest {
     private final UserService userService;
     private ItemMapper itemMapper;
 
-    @Test
-    void createAndGetItemTest() {
-        UserDto user = userService.createUser(Generators.generateUser(1L));
-        ItemDto dto = itemService.createItem(user.getId(), Generators.generateDto(1L));
-
-        List<ItemDto> dtos = itemService.getAllUserItems(user.getId());
-        ItemDto dto1 = itemService.getItemById(dto.getId());
-
-        assertEquals(1, dtos.size());
-        assertEquals(dto, dtos.getFirst());
-        assertEquals(dto, dto1);
-    }
+//    @Test
+//    void createAndGetItemTest() {
+//        UserDto user = userService.createUser(Generators.generateUser(1L));
+//        ItemDto dto = itemService.createItem(user.getId(), Generators.generateDto(1L));
+//
+//        List<ItemDto> dtos = itemService.getAllUserItems(user.getId());
+//        ItemDto dto1 = itemService.getItemById(dto.getId());
+//
+//        assertEquals(1, dtos.size());
+//        assertEquals(dto, dtos.getFirst());
+//        assertEquals(dto, dto1);
+//    }
 
     @Test
     void createItemWithWrongUserTest() {

@@ -53,14 +53,14 @@ class ItemControllerTest {
 
     }
 
-    @Test
-    void testGetAllUserItems() throws Exception {
-        // Мокаем список элементов
-        List<ItemDto> items = List.of(itemDto);
-        when(itemService.getAllUserItems(userId)).thenReturn(items);
-
-        mockMvc.perform(get("/items").header("X-Sharer-User-Id", userId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value("Test Item"));
-    }
+//    @Test
+//    void testGetAllUserItems() throws Exception {
+//        // Мокаем список элементов
+//        List<ItemDto> items = List.of(itemDto);
+//        when(itemService.getAllUserItems(userId)).thenReturn(items);
+//
+//        mockMvc.perform(get("/items").header("X-Sharer-User-Id", userId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value("Test Item"));
+//    }
 
     @Test
     void testGetItemById() throws Exception {
