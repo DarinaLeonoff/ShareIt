@@ -6,8 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
+import ru.practicum.shareit.item.dto.NewCommentDto;
+import ru.practicum.shareit.item.model.Comment;
+import ru.practicum.shareit.item.service.CommentService;
 import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -23,6 +27,7 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private final ItemBookingService itemBookingService;
+    private final CommentService commentService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,6 +58,14 @@ public class ItemController {
     public List<ItemDto> searchItems(@RequestParam("text") String text) {
         log.info("Getting items by request: {}", text);
         return itemService.search(text);
+    }
+
+    @PostMapping ("/{itemId}/comment")
+    public CommentResponseDto addComment(@RequestHeader(Constants.USER_ID_HEADER) Long userId,
+                                         @PathVariable long itemId,
+                                         @Valid @RequestBody NewCommentDto dto){
+        log.info("User with id={}, comments item with id {}: {}", userId, itemId, dto.getText());
+        return commentService.addComment(userId, itemId, dto);
     }
 
 
