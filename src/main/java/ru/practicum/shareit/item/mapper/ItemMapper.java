@@ -1,13 +1,15 @@
 package ru.practicum.shareit.item.mapper;
 
-import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDateDto;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingDto;
+import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
+import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemWIthCommentDto;
+import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
@@ -17,5 +19,8 @@ public interface ItemMapper {
     @Mapping(target = "lastBooking", source = "lastBooking")
     @Mapping(target = "nextBooking", source = "nextBooking")
     @Mapping(target = "id", source = "item.id")
-    ItemWithBookingDto mapItemToItemWithBooking(Item item, BookingDateDto lastBooking, BookingDateDto nextBooking);
+    @Mapping(target = "comments", source = "comments")
+    ItemWithCommentAndBookingDto mapItemToItemWithBooking(Item item, BookingDateDto lastBooking, BookingDateDto nextBooking, List<CommentResponseDto> comments);
+
+
 }

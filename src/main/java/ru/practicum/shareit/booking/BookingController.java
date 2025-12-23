@@ -25,6 +25,7 @@ public class BookingController {
     @PostMapping
     public BookingResponseDto makeBooking(@RequestBody BookingRequestDto dto,
                                               @RequestHeader(Constants.USER_ID_HEADER) long userId){
+        log.info("Start booking item {}", dto.getItemId());
         return bookingService.makeBooking(dto, userId);
     }
 

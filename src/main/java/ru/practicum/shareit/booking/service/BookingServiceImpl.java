@@ -36,7 +36,7 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public BookingResponseDto makeBooking(BookingRequestDto dto, long userId) {
         UserDto user = userService.getUser(userId);
-        Item item = itemMapper.mapToItem(itemService.getItemById(dto.getItemId()));
+        Item item = itemMapper.mapToItem(itemService.getItemDtoById(dto.getItemId()));
         if (!item.isAvailable()){
             throw new WrongRequestException("Объект не доступен для бронирования.");
         }
@@ -91,6 +91,14 @@ public class BookingServiceImpl implements BookingService{
         bookings.add(bookingRepository.findLastBooking(cur, itemId).orElse(null));
         bookings.add(bookingRepository.findNextBooking(cur, itemId).orElse(null));
         return bookings.stream().map(mapper::mapBookingToDateDto).toList();
+    }
+
+    @Override
+    public List<Booking> UserItemBooking(long userId, long itemId) {
+        return bookingRepository.findByBookerId(userId).stream()
+                .filter(b -> b.getItem().getId() == itemId &&
+                        b.getStatus() == BookingStatus.APPROVED &&
+                        b.getEnd().isBefore(LocalDateTime.now())).toList();
     }
 
     private List<BookingResponseDto> getListByState(List<Booking> bookings, BookingState state){

@@ -18,4 +18,6 @@ public interface BookingService {
 
     List<BookingResponseDto> getAllUserItemBooking(long userId, BookingState state);
     List<BookingDateDto> getLastNextBookingByItemId(long itemId);
+
+    List<Booking> UserItemBooking(long userId, long itemId);
 }
