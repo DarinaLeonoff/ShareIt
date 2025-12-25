@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 public class Generators {
 
     public static Item generateItem(Long id) {
-        Item item = new Item();
+        Item item = Item.builder().build();
         item.setId(id);
         item.setName("Test");
         item.setDescription("Desc");
@@ -34,7 +34,7 @@ public class Generators {
     }
 
     public static Item generateItemForSearch(int i, String text) {
-        Item item = new Item();
+        Item item = Item.builder().build();
         if (i == 1 || i == 3) {
             item.setName("Dto test name " + text);
         } else {

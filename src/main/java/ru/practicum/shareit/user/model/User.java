@@ -6,10 +6,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.practicum.shareit.item.model.Item;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * TODO Sprint add-controllers.

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.exceptions;
 
-public class WrongRequestException extends RuntimeException{
+public class WrongRequestException extends RuntimeException {
     public WrongRequestException() {
     }
 

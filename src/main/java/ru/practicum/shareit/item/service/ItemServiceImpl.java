@@ -4,14 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingDateDto;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
-import ru.practicum.shareit.item.dto.item.ItemDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
-import ru.practicum.shareit.item.dto.item.ItemWIthCommentDto;
-import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
+import ru.practicum.shareit.item.dto.item.ItemDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.mapper.ItemMapperUtils;
@@ -37,9 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
 
-    public ItemServiceImpl(@Qualifier("DbItemRepo") ItemRepository itemRepository, UserService userService,
-                           ItemMapper itemMapper, UserMapper userMapper, CommentMapper commentMapper,
-                           CommentRepository commentRepository) {
+    public ItemServiceImpl(@Qualifier("DbItemRepo") ItemRepository itemRepository, UserService userService, ItemMapper itemMapper, UserMapper userMapper, CommentMapper commentMapper, CommentRepository commentRepository) {
         this.itemRepository = itemRepository;
         this.userService = userService;
         this.itemMapper = itemMapper;
@@ -59,14 +53,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemDtoById(long itemId) {
-        return itemMapper.mapToDto(itemRepository.findById(itemId)
-                        .orElseThrow(() -> new NotFoundException("Предмет с таким id("+itemId+") не найден")));
+        return itemMapper.mapToDto(itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с таким id(" + itemId + ") не найден")));
     }
 
     @Override
     @Transactional
     public ItemDto editItem(long userId, ItemDto itemDto, long itemId) {
-        Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с таким id("+itemId+") не найден"));
+        Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с таким id(" + itemId + ") не найден"));
         if (oldItem.getOwnerId() != userId) {
             log.info("Попытка редактировать карточку предмета другого пользователя");
             throw new NotFoundException("Пользователь не является собственником данной вещи");
@@ -77,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(String text) {
-        if(text == null || text.isBlank()){
+        if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
         return itemRepository.searchByText(text).stream().map(itemMapper::mapToDto).toList();
@@ -85,10 +78,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentResponseDto addComment(Long userId, long itemId, NewCommentDto dto) {
-        Comment com = commentMapper.mapNewCommentToComment(dto,
-                userMapper.mapDtoToUser(userService.getUser(userId)),
-                itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден.")),
-                LocalDateTime.now());
+        Comment com = commentMapper.mapNewCommentToComment(dto, userMapper.mapDtoToUser(userService.getUser(userId)), itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден.")), LocalDateTime.now());
         return commentMapper.mapCommentToResponse(commentRepository.save(com));
     }
 

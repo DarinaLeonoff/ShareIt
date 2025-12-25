@@ -1,7 +1,6 @@
 package ru.practicum.shareit.ItemTests.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.Generators;
@@ -27,7 +26,7 @@ public class InMemoryItemRepositoryTest {
 
     @Test
     void getEmptyListTest() {
-        Assertions.assertTrue(repo.findByOwnerId(1).isEmpty());
+        assertTrue(repo.findByOwnerId(1).isEmpty());
     }
 
     @Test
@@ -35,11 +34,14 @@ public class InMemoryItemRepositoryTest {
         Item item = Generators.generateItem(0L);
         Item created = repo.saveItem(item);
 
-        List<Item> list = repo.findByOwnerId(1L);
-        Item dto1 = repo.findById(created.getId()).orElseThrow(() -> new NotFoundException("Предмет с таким id("+created.getId()+") не найден"));
+        List<Item> list = repo.findByOwnerId(100L);
+        Item item1 = repo.findById(created.getId())
+                .orElseThrow(() -> new NotFoundException("Предмет с таким id(" + created.getId() + ") не найден"));
+
+        log.info("Was added {}.\nList if items owned by {}: {}\nItem by id was found: {}", created, 1L, list, item1);
 
         assertEquals(1, list.size());
-        assertEquals(dto1, list.getFirst());
+        assertEquals(item1, list.get(0));
 
         assertEquals(item.getName(), created.getName());
         assertEquals(item.getDescription(), created.getDescription());
@@ -113,9 +115,7 @@ public class InMemoryItemRepositoryTest {
         List<Item> search = repo.searchByText(text);
 
         assertEquals(1, search.size());
-        assertEquals(id.getFirst(), search.getFirst().getId());
-        assertEquals(repo.findById(id.getFirst()).get(), search.getFirst());
+        assertEquals(id.get(0), search.get(0).getId());
+        assertEquals(repo.findById(id.get(0)).get(), search.get(0));
     }
-
-
 }

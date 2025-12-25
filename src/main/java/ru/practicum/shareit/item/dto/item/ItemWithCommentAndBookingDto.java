@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.dto.item;
 
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingDateDto;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
@@ -10,6 +12,8 @@ import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import java.util.List;
 
 @Data
+@Builder
+@Valid
 public class ItemWithCommentAndBookingDto {
     private long id;
     @NotNull
@@ -27,4 +31,5 @@ public class ItemWithCommentAndBookingDto {
     private BookingDateDto nextBooking;
 
     List<CommentResponseDto> comments;
+
 }

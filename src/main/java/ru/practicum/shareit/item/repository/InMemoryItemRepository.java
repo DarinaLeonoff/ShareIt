@@ -27,7 +27,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-    public Optional<Item> findById(Long id){
+    public Optional<Item> findById(Long id) {
         return Optional.of(itemsRepository.get(id));
     }
 

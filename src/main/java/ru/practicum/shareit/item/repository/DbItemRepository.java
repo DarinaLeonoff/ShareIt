@@ -14,9 +14,9 @@ import java.util.Optional;
 @Qualifier("DbItemRepo")
 public interface DbItemRepository extends JpaRepository<Item, Long>, ItemRepository {
     @Override
-    default Item saveItem(Item item){
+    default Item saveItem(Item item) {
         return save(item);
-    };
+    }
 
     @Override
     List<Item> findByOwnerId(long userId);
@@ -25,18 +25,18 @@ public interface DbItemRepository extends JpaRepository<Item, Long>, ItemReposit
     Optional<Item> findById(Long id);
 
     @Override
-    default Item editItem(Item item){
+    default Item editItem(Item item) {
         return save(item);
     }
 
     @Override
     @Query("""
-    SELECT i
-    FROM Item i
-    WHERE
-        (LOWER(i.name) LIKE CONCAT('%', LOWER(:text), '%')
-        OR LOWER(i.description) LIKE CONCAT('%', LOWER(:text), '%'))
-        AND i.available = true
-    """)
+            SELECT i
+            FROM Item i
+            WHERE
+                (LOWER(i.name) LIKE CONCAT('%', LOWER(:text), '%')
+                OR LOWER(i.description) LIKE CONCAT('%', LOWER(:text), '%'))
+                AND i.available = true
+            """)
     List<Item> searchByText(@Param("text") String text);
 }

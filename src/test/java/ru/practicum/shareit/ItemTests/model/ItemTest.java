@@ -23,7 +23,7 @@ public class ItemTest {
 
     @Test
     void testSettersAndGetters() {
-        Item item = new Item();
+        Item item = Item.builder().build();
 
         // Устанавливаем значения
         item.setId(123L);

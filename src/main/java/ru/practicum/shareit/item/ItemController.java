@@ -7,10 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
-import ru.practicum.shareit.item.dto.item.ItemDto;
-import ru.practicum.shareit.item.dto.item.ItemWIthCommentDto;
-import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
+import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -62,10 +61,8 @@ public class ItemController {
         return itemService.search(text);
     }
 
-    @PostMapping ("/{itemId}/comment")
-    public CommentResponseDto addComment(@RequestHeader(Constants.USER_ID_HEADER) Long userId,
-                                         @PathVariable long itemId,
-                                         @Valid @RequestBody NewCommentDto dto){
+    @PostMapping("/{itemId}/comment")
+    public CommentResponseDto addComment(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @PathVariable long itemId, @Valid @RequestBody NewCommentDto dto) {
         log.info("User with id={}, comments item with id {}: {}", userId, itemId, dto.getText());
         itemBookingService.checkUserHasBooking(userId, itemId);
         return itemService.addComment(userId, itemId, dto);

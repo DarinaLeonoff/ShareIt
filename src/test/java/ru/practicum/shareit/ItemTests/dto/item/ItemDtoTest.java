@@ -1,4 +1,4 @@
-package ru.practicum.shareit.ItemTests.dto;
+package ru.practicum.shareit.ItemTests.dto.item;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;

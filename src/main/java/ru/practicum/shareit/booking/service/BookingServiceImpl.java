@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BookingServiceImpl implements BookingService{
+public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemService itemService;
@@ -37,7 +37,7 @@ public class BookingServiceImpl implements BookingService{
     public BookingResponseDto makeBooking(BookingRequestDto dto, long userId) {
         UserDto user = userService.getUser(userId);
         Item item = itemMapper.mapToItem(itemService.getItemDtoById(dto.getItemId()));
-        if (!item.isAvailable()){
+        if (!item.isAvailable()) {
             throw new WrongRequestException("Объект не доступен для бронирования.");
         }
 
@@ -49,10 +49,10 @@ public class BookingServiceImpl implements BookingService{
         return mapper.mapBookingToResponseDto(bookingRepository.save(booking));
     }
 
-    public BookingResponseDto approveBooking(long userId, long bookingId, boolean approved){
+    public BookingResponseDto approveBooking(long userId, long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId);
         Item item = booking.getItem();
-        if(userId != item.getOwnerId()){
+        if (userId != item.getOwnerId()) {
             throw new WrongRequestException("Пользователь не является собственником и не может подтверждать бронь");
         }
 
@@ -60,9 +60,9 @@ public class BookingServiceImpl implements BookingService{
         return mapper.mapBookingToResponseDto(bookingRepository.save(booking));
     }
 
-    public BookingResponseDto getBookingById(long userId, long bookingId){
+    public BookingResponseDto getBookingById(long userId, long bookingId) {
         Booking booking = bookingRepository.findById(bookingId);
-        if(booking.getBooker().getId() != userId && booking.getItem().getOwnerId() != userId){
+        if (booking.getBooker().getId() != userId && booking.getItem().getOwnerId() != userId) {
             throw new WrongRequestException("У пользователя нет прав доступа к информации о бронировании.");
         }
         return mapper.mapBookingToResponseDto(booking);
@@ -94,15 +94,16 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
-    public List<Booking> UserItemBooking(long userId, long itemId) {
+    public List<Booking> userItemBooking(long userId, long itemId) {
         return bookingRepository.findByBookerId(userId).stream()
-                .filter(b -> b.getItem().getId() == itemId &&
-                        b.getStatus() == BookingStatus.APPROVED &&
-                        b.getEnd().isBefore(LocalDateTime.now())).toList();
+                .filter(b -> b.getItem().getId() == itemId
+                        && b.getStatus() == BookingStatus.APPROVED
+                        && b.getEnd().isBefore(LocalDateTime.now()))
+                .toList();
     }
 
-    private List<BookingResponseDto> getListByState(List<Booking> bookings, BookingState state){
-        return switch (state){
+    private List<BookingResponseDto> getListByState(List<Booking> bookings, BookingState state) {
+        return switch (state) {
             case PAST -> getPast(bookings);
             case FUTURE -> getFuture(bookings);
             case CURRENT -> getCurrent(bookings);
@@ -112,42 +113,31 @@ public class BookingServiceImpl implements BookingService{
         };
     }
 
-    private List<BookingResponseDto> getPast(List<Booking> bookings){
+    private List<BookingResponseDto> getPast(List<Booking> bookings) {
         LocalDateTime cur = LocalDateTime.now();
-        return bookings.stream()
-                .filter(booking -> booking.getStart().isBefore(cur)
-                        && booking.getEnd().isBefore(cur)
-                        && booking.getStatus().equals(BookingStatus.APPROVED))
-                .map(mapper::mapBookingToResponseDto).toList();
+        return bookings.stream().filter(booking -> booking.getStart().isBefore(cur) && booking.getEnd().isBefore(cur) && booking.getStatus().equals(BookingStatus.APPROVED)).map(mapper::mapBookingToResponseDto).toList();
 
     }
 
-    private List<BookingResponseDto> getFuture(List<Booking> bookings){
+    private List<BookingResponseDto> getFuture(List<Booking> bookings) {
         LocalDateTime cur = LocalDateTime.now();
-        return bookings.stream()
-                .filter(booking -> booking.getEnd().isAfter(cur)
-                        && booking.getStatus().equals(BookingStatus.APPROVED))
-        .map(mapper::mapBookingToResponseDto).toList();
+        return bookings.stream().filter(booking -> booking.getEnd().isAfter(cur) && booking.getStatus().equals(BookingStatus.APPROVED)).map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getCurrent(List<Booking> bookings){
+    private List<BookingResponseDto> getCurrent(List<Booking> bookings) {
         LocalDateTime cur = LocalDateTime.now();
-        return bookings.stream()
-                .filter(booking -> booking.getStart().isBefore(cur)
-                        && booking.getEnd().isAfter(cur)
-                        && booking.getStatus().equals(BookingStatus.APPROVED))
-                .map(mapper::mapBookingToResponseDto).toList();
+        return bookings.stream().filter(booking -> booking.getStart().isBefore(cur) && booking.getEnd().isAfter(cur) && booking.getStatus().equals(BookingStatus.APPROVED)).map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getWaiting(List<Booking> bookings){
+    private List<BookingResponseDto> getWaiting(List<Booking> bookings) {
         return bookings.stream().filter(booking -> booking.getStatus().equals(BookingStatus.WAITING)).map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getRejected(List<Booking> bookings){
+    private List<BookingResponseDto> getRejected(List<Booking> bookings) {
         return bookings.stream().filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED)).map(mapper::mapBookingToResponseDto).toList();
     }
 
-    private List<BookingResponseDto> getAll(List<Booking> bookings){
+    private List<BookingResponseDto> getAll(List<Booking> bookings) {
         return bookings.stream().map(mapper::mapBookingToResponseDto).toList();
     }
 

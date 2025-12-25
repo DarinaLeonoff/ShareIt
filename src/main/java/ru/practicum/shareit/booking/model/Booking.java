@@ -2,11 +2,9 @@ package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import ru.practicum.shareit.booking.service.BookingState;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Entity
-@Table(name="booking")
+@Table(name = "booking")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

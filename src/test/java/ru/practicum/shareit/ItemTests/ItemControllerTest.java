@@ -10,8 +10,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
+import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -19,17 +22,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//TODO to be fixed next sprint
 @SpringBootTest
 @AutoConfigureMockMvc
 class ItemControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ItemBookingService itemBookingService;
 
     @MockBean
     private ItemService itemService;
 
     private ItemDto itemDto;
+    private ItemWithCommentAndBookingDto itemBookingDto;
     private Long userId;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -43,6 +50,15 @@ class ItemControllerTest {
         itemDto.setAvailable(true);
 
         userId = 1L;
+
+        itemBookingDto = ItemWithCommentAndBookingDto.builder()
+                .name("Test Item")
+                .description("Description")
+                .available(true)
+                .lastBooking(null)
+                .nextBooking(null)
+                .comments(new ArrayList<>())
+                .build();
     }
 
     @Test
@@ -56,8 +72,8 @@ class ItemControllerTest {
 //    @Test
 //    void testGetAllUserItems() throws Exception {
 //        // Мокаем список элементов
-//        List<ItemDto> items = List.of(itemDto);
-//        when(itemService.getAllUserItems(userId)).thenReturn(items);
+//        List<ItemWithCommentAndBookingDto> items = List.of(itemBookingDto);
+//        when(itemBookingService.getAllUserItems(userId)).thenReturn(items);
 //
 //        mockMvc.perform(get("/items").header("X-Sharer-User-Id", userId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value("Test Item"));
 //    }
