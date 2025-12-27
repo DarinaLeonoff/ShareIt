@@ -2,7 +2,6 @@ package ru.practicum.shareit.ItemTests.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
@@ -13,8 +12,6 @@ public class ItemServiceImplTest {
     private ItemServiceImpl itemService;
     @Autowired
     private UserServiceImpl userService;
-    @Autowired
-    private ItemBookingService itemBookingService;
 
 //    @Test
 //    @Transactional

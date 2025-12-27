@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.dto.item;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,11 +24,8 @@ public class ItemWithCommentAndBookingDto {
     @NotNull
     private Boolean available;
 
-    @Nullable
     private BookingDateDto lastBooking;
-    @Nullable
     private BookingDateDto nextBooking;
-
     List<CommentResponseDto> comments;
 
 }

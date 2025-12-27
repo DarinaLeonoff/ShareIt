@@ -9,21 +9,12 @@ import java.util.Optional;
 
 @Repository
 @Qualifier("dbRepo")
-public interface DbUserRepository extends JpaRepository<User, Long>, UserRepository {
+public interface DbUserRepository extends JpaRepository<User, Long> {
     @Override
-    default User createUser(User user) {
-        return save(user);
-    }
+    User save(User user);
 
-    @Override
-    default User editUser(User user) {
-        return save(user);
-    }
-
-    @Override
     Optional<User> findById(long id);
 
-    @Override
     default void removeUser(long id) {
         deleteById(id);
     }

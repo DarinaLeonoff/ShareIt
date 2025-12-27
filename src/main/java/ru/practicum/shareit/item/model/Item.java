@@ -3,15 +3,15 @@ package ru.practicum.shareit.item.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * TODO Sprint add-controllers.
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

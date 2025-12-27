@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
 import ru.practicum.shareit.item.dto.item.ItemDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
-import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
-    private final ItemBookingService itemBookingService;
 
     //Добавление вещи для бронирования
     @PostMapping
@@ -38,14 +36,14 @@ public class ItemController {
     @GetMapping
     public List<ItemWithCommentAndBookingDto> getAllUserItems(@RequestHeader(Constants.USER_ID_HEADER) Long userId) {
         log.info("Getting all items for user with id = {}", userId);
-        return itemBookingService.getAllUserItems(userId);
+        return itemService.getAllUserItems(userId);
     }
 
     //Получение информации о конкретной вещи(не обязательно собственником)
     @GetMapping("/{itemId}")
     public ItemWithCommentAndBookingDto getItem(@PathVariable Long itemId) {
         log.info("Getting information about item with id = {}", itemId);
-        return itemBookingService.getItemWithCommentById(itemId);
+        return itemService.getItemWithCommentById(itemId);
     }
 
     //Редактирование карточки вещи доступно только собственнику
@@ -64,7 +62,6 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentResponseDto addComment(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @PathVariable long itemId, @Valid @RequestBody NewCommentDto dto) {
         log.info("User with id={}, comments item with id {}: {}", userId, itemId, dto.getText());
-        itemBookingService.checkUserHasBooking(userId, itemId);
         return itemService.addComment(userId, itemId, dto);
     }
 

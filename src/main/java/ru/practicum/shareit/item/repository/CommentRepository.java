@@ -13,4 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment save(Comment comment);
 
     List<Comment> findByItemId(long itemId);
+
+    List<Comment> findAllByItemOwnerId(long ownerId);
 }

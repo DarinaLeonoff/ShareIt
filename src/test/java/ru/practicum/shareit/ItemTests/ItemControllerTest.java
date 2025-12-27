@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.item.ItemDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
-import ru.practicum.shareit.item.service.ItemBookingService;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ class ItemControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ItemBookingService itemBookingService;
 
     @MockBean
     private ItemService itemService;
@@ -39,7 +36,7 @@ class ItemControllerTest {
     private ItemWithCommentAndBookingDto itemBookingDto;
     private Long userId;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -88,7 +85,7 @@ class ItemControllerTest {
 
     @Test
     void testEditItem() throws Exception {
-        Long itemId = 1L;
+        long itemId = 1L;
         when(itemService.editItem(userId, itemDto, itemId)).thenReturn(itemDto);
 
         mockMvc.perform(patch("/items/{itemId}", itemId).header("X-Sharer-User-Id", userId).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(itemDto))).andExpect(status().isOk()).andExpect(jsonPath("name").value("Test Item"));

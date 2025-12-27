@@ -14,6 +14,8 @@ import java.util.List;
 public interface ItemMapper {
     ItemDto mapToDto(Item item);
 
+    List<ItemDto> mapItemsToItemDtos(List<Item> items);
+
     Item mapToItem(ItemDto dto);
 
 
@@ -23,5 +25,20 @@ public interface ItemMapper {
     @Mapping(target = "comments", source = "comments")
     ItemWithCommentAndBookingDto mapItemToItemWithBooking(Item item, BookingDateDto lastBooking, BookingDateDto nextBooking, List<CommentResponseDto> comments);
 
+
+    default Item updateItem(Item item, ItemDto dto) {
+        if (dto.getName() != null && !dto.getName().isBlank()) {
+            item.setName(dto.getName());
+        }
+
+        if (dto.getDescription() != null && !dto.getDescription().isBlank()) {
+            item.setDescription(dto.getDescription());
+        }
+
+        if (dto.getAvailable() != null) {
+            item.setAvailable(dto.getAvailable());
+        }
+        return item;
+    }
 
 }
