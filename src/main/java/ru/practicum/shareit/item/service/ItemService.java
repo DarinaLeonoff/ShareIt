@@ -20,6 +20,6 @@ public interface ItemService {
 
     List<ItemWithCommentAndBookingDto> getAllUserItems(long userId);
 
-    ItemWithCommentAndBookingDto getItemWithCommentById(long itemId);
+    ItemWithCommentAndBookingDto getItemWithCommentById(long useId, long itemId);
 
 }

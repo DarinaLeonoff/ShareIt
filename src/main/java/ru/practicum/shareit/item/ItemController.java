@@ -41,9 +41,9 @@ public class ItemController {
 
     //Получение информации о конкретной вещи(не обязательно собственником)
     @GetMapping("/{itemId}")
-    public ItemWithCommentAndBookingDto getItem(@PathVariable Long itemId) {
+    public ItemWithCommentAndBookingDto getItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @PathVariable Long itemId) {
         log.info("Getting information about item with id = {}", itemId);
-        return itemService.getItemWithCommentById(itemId);
+        return itemService.getItemWithCommentById(userId, itemId);
     }
 
     //Редактирование карточки вещи доступно только собственнику

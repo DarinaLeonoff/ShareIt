@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDateDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.WrongRequestException;
@@ -116,16 +117,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemWithCommentAndBookingDto getItemWithCommentById(long itemId) {
+    public ItemWithCommentAndBookingDto getItemWithCommentById(long userId, long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        log.info("Item: {}", item);
 
         List<Booking> bookings = bookingRepository.findByItemId(itemId);
         List<Comment> comments = commentRepository.findByItemId(itemId);
-        log.info("All bookings: {}", bookings);
 
-        List<BookingDateDto> lastNextBooking = getLastNextBooking(bookings);
-        log.info("For item {}: last booking ={}, next = {}", item.getId(), lastNextBooking.get(0), lastNextBooking.get(1));
+        List<BookingDateDto> lastNextBooking;
+        if (userId != item.getOwnerId()) {
+            lastNextBooking = Arrays.asList(null, null);
+        } else {
+            lastNextBooking = getLastNextBooking(bookings);
+        }
         List<CommentResponseDto> itemComments = comments.stream()
                 .filter(c -> c.getItem().getId() == itemId)
                 .map(commentMapper::mapCommentToResponse)
@@ -136,7 +139,10 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkUserHasBooking(long userId, long itemId) {
         List<Booking> bookings = bookingRepository.findByBookerId(userId)
-                .stream().filter(b -> b.getItem().getId() == itemId).toList();
+                .stream().filter(b -> b.getItem().getId() == itemId
+                        && b.getStatus() == BookingStatus.APPROVED
+                        && b.getEnd().isBefore(LocalDateTime.now())).toList();
+
         if (bookings.isEmpty()) {
             throw new WrongRequestException("Пользователь который еще не пользовался предметом, не может оставить на"
                     + " него отзыв.");
