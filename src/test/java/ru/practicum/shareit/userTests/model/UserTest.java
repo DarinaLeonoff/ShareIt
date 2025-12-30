@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.Generators;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Set;
@@ -22,10 +23,12 @@ public class UserTest {
 
     @Autowired
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    @Autowired
+    private UserMapper mapper;
 
     @Test
     public void validationTest() {
-        User user = Generators.generateUser(1L);
+        User user = mapper.mapDtoToUser(Generators.generateUser(1L));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         Assertions.assertTrue(violations.isEmpty());
@@ -34,7 +37,7 @@ public class UserTest {
     @ParameterizedTest
     @NullAndEmptySource
     public void validationNameTest(String name) {
-        User user = Generators.generateUser(1L);
+        User user = mapper.mapDtoToUser(Generators.generateUser(1L));
         user.setName(name);
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -45,7 +48,7 @@ public class UserTest {
     @NullAndEmptySource
     @ValueSource(strings = {"emailyandex.ru", "email@", "@yandex.ru"})
     public void validationEmailTest(String email) {
-        User user = Generators.generateUser(1L);
+        User user = mapper.mapDtoToUser(Generators.generateUser(1L));
         user.setEmail(email);
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -81,9 +84,9 @@ public class UserTest {
 
     @Test
     void testEqualsAndHashCode() {
-        User user1 = Generators.generateUser(1L);
-        User user2 = Generators.generateUser(1L);
-        User user3 = Generators.generateUser(2L);
+        User user1 = mapper.mapDtoToUser(Generators.generateUser(1L));
+        User user2 = mapper.mapDtoToUser(Generators.generateUser(1L));
+        User user3 = mapper.mapDtoToUser(Generators.generateUser(2L));
 
         assertTrue(user1.equals(user1)); // Рефлексивность
         assertTrue(user1.equals(user2)); // Симметричность
@@ -96,7 +99,7 @@ public class UserTest {
 
     @Test
     void testToString() {
-        User user = Generators.generateUser(1L);
+        User user = mapper.mapDtoToUser(Generators.generateUser(1L));
 
         String expected = "User(id=" + user.getId() + ", name=" + user.getName() + ", email=" + user.getEmail() + ")";
         assertEquals(expected, user.toString());

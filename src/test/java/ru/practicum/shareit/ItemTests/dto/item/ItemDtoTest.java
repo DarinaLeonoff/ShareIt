@@ -1,4 +1,4 @@
-package ru.practicum.shareit.ItemTests.dto;
+package ru.practicum.shareit.ItemTests.dto.item;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.Generators;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemDto;
 
 import java.util.Set;
 

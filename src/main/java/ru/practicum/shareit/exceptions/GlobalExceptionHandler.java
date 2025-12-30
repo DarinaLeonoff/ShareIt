@@ -19,6 +19,13 @@ public class GlobalExceptionHandler {
         return new ErrorResponse("Not valid.", Objects.requireNonNull(e.getFieldError()).getDefaultMessage());
     }
 
+    @ExceptionHandler(WrongRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleWrongRequest(final WrongRequestException e) {
+        return new ErrorResponse("Wrong request data.",e.getMessage());
+    }
+
     @ExceptionHandler(AlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody

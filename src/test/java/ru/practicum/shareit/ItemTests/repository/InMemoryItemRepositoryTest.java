@@ -1,10 +1,10 @@
 package ru.practicum.shareit.ItemTests.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.Generators;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.InMemoryItemRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -26,19 +26,22 @@ public class InMemoryItemRepositoryTest {
 
     @Test
     void getEmptyListTest() {
-        Assertions.assertTrue(repo.getAllUserItems(1).isEmpty());
+        assertTrue(repo.findByOwnerId(1).isEmpty());
     }
 
     @Test
     void createAndGetItemTest() {
         Item item = Generators.generateItem(0L);
-        Item created = repo.createItem(1L, item);
+        Item created = repo.saveItem(item);
 
-        List<Item> list = repo.getAllUserItems(1L);
-        Item dto1 = repo.getItemById(created.getId());
+        List<Item> list = repo.findByOwnerId(100L);
+        Item item1 = repo.findById(created.getId())
+                .orElseThrow(() -> new NotFoundException("Предмет с таким id(" + created.getId() + ") не найден"));
+
+        log.info("Was added {}.\nList if items owned by {}: {}\nItem by id was found: {}", created, 1L, list, item1);
 
         assertEquals(1, list.size());
-        assertEquals(dto1, list.getFirst());
+        assertEquals(item1, list.get(0));
 
         assertEquals(item.getName(), created.getName());
         assertEquals(item.getDescription(), created.getDescription());
@@ -47,12 +50,12 @@ public class InMemoryItemRepositoryTest {
 
     @Test
     void editItemTest() {
-        Item created = repo.createItem(1L, Generators.generateItem(1L));
+        Item created = repo.saveItem(Generators.generateItem(1L));
 
         Item forUpdate = Generators.generateItem(created.getId());
         forUpdate.setName("New Greate Name");
 
-        Item updated = repo.editItem(forUpdate, created.getId());
+        Item updated = repo.editItem(forUpdate);
 
         assertEquals(created.getId(), updated.getId());
         assertNotEquals(created.getName(), updated.getName());
@@ -62,22 +65,22 @@ public class InMemoryItemRepositoryTest {
     }
 
     @Test
-    void searchTest() {
+    void searchByTextTest() {
         for (int i = 0;
              i < 10;
              i++) {
-            repo.createItem(i, Generators.generateItem(1L));
+            repo.saveItem(Generators.generateItem(1L));
         }
         String text = "text";
         Item nameTest = Generators.generateItemForSearch(1, text);
         Item descTest = Generators.generateItemForSearch(2, text);
         Item doubleTest = Generators.generateItemForSearch(3, text);
 
-        Item createdNameTest = repo.createItem(1L, nameTest);
-        Item createdDescTest = repo.createItem(2L, descTest);
-        Item createdDoubleTest = repo.createItem(5L, doubleTest);
+        Item createdNameTest = repo.saveItem(nameTest);
+        Item createdDescTest = repo.saveItem(descTest);
+        Item createdDoubleTest = repo.saveItem(doubleTest);
 
-        List<Item> search = repo.search(text);
+        List<Item> search = repo.searchByText(text);
 
         assertEquals(3, search.size());
         assertTrue(search.contains(createdNameTest));
@@ -86,7 +89,7 @@ public class InMemoryItemRepositoryTest {
     }
 
     @Test
-    void searchWithUnableTest() {
+    void searchByTextWithUnableTest() {
         String text = "text";
         List<Long> id = new ArrayList<>();
         for (int i = 0;
@@ -103,18 +106,16 @@ public class InMemoryItemRepositoryTest {
             if (i > 5) {
                 item.setAvailable(false);
             }
-            Item created = repo.createItem(i, item);
+            Item created = repo.saveItem(item);
             if (isText) {
                 id.add(created.getId());
             }
         }
 
-        List<Item> search = repo.search(text);
+        List<Item> search = repo.searchByText(text);
 
         assertEquals(1, search.size());
-        assertEquals(id.getFirst(), search.getFirst().getId());
-        assertEquals(repo.getItemById(id.getFirst()), search.getFirst());
+        assertEquals(id.get(0), search.get(0).getId());
+        assertEquals(repo.findById(id.get(0)).get(), search.get(0));
     }
-
-
 }

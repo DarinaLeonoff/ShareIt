@@ -1,13 +1,13 @@
 package ru.practicum.shareit;
 
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 public class Generators {
 
     public static Item generateItem(Long id) {
-        Item item = new Item();
+        Item item = Item.builder().build();
         item.setId(id);
         item.setName("Test");
         item.setDescription("Desc");
@@ -16,8 +16,8 @@ public class Generators {
         return item;
     }
 
-    public static User generateUser(Long i) {
-        User user = new User();
+    public static UserDto generateUser(Long i) {
+        UserDto user = new UserDto();
         user.setId(i);
         user.setName("Test Name " + i);
         user.setEmail("test" + i + "@ya.ru");
@@ -34,7 +34,7 @@ public class Generators {
     }
 
     public static Item generateItemForSearch(int i, String text) {
-        Item item = new Item();
+        Item item = Item.builder().build();
         if (i == 1 || i == 3) {
             item.setName("Dto test name " + text);
         } else {
