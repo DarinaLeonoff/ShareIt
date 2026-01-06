@@ -4,7 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDateDto;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
-import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemRequestDto;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -12,12 +13,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
-    ItemDto mapToDto(Item item);
+    ItemRequestDto mapToDto(Item item);
 
-    List<ItemDto> mapItemsToItemDtos(List<Item> items);
+    List<ItemResponseDto> mapItemsToResponses(List<Item> items);
 
-    Item mapToItem(ItemDto dto);
+    Item mapToItem(ItemRequestDto dto);
 
+    Item mapResponseToItem(ItemResponseDto dto);
+
+    ItemResponseDto mapItemToResponse(Item item);
 
     @Mapping(target = "lastBooking", source = "lastBooking")
     @Mapping(target = "nextBooking", source = "nextBooking")
@@ -26,7 +30,7 @@ public interface ItemMapper {
     ItemWithCommentAndBookingDto mapItemToItemWithBooking(Item item, BookingDateDto lastBooking, BookingDateDto nextBooking, List<CommentResponseDto> comments);
 
 
-    default Item updateItem(Item item, ItemDto dto) {
+    default Item updateItem(Item item, ItemRequestDto dto) {
         if (dto.getName() != null && !dto.getName().isBlank()) {
             item.setName(dto.getName());
         }

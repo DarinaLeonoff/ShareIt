@@ -1,116 +1,96 @@
 package ru.practicum.shareit.ItemTests.service;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.Generators;
+import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.dto.item.ItemRequestDto;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
+import ru.practicum.shareit.item.repository.DbItemRepository;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.user.dto.UserResponseDto;
+import ru.practicum.shareit.user.repository.DbUserRepository;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
-//TODO To be fixed next sprint
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@Transactional
 public class ItemServiceImplTest {
     @Autowired
     private ItemServiceImpl itemService;
     @Autowired
     private UserServiceImpl userService;
 
-//    @Test
-//    @Transactional
-//    void createAndGetItemTest() {
-//        UserDto user = userService.createUser(Generators.generateUser(1L));
-//        ItemDto dto = itemService.createItem(user.getId(), Generators.generateDto(1L));
-//
-//        List<ItemWithCommentAndBookingDto> dtos = itemBookingService.getAllUserItems(user.getId());
-//        ItemWithCommentAndBookingDto dto1 = itemBookingService.getItemWithCommentById(dto.getId());
-//
-//        assertEquals(1, dtos.size());
-//        assertEquals(dto, dtos.get(0));
-//        assertEquals(dto, dto1);
-//    }
+    @Mock
+    private DbUserRepository userRepository;
+    @Mock
+    private DbItemRepository itemRepository;
 
-//    @Test
-//    void createItemWithWrongUserTest() {
-//        UserDto user = userService.createUser(Generators.generateUser(1L));
-//
-//        assertThrows(NotFoundException.class, () -> {
-//            itemService.createItem(user.getId() + 1, Generators.generateDto(1L));
-//        });
-//    }
+    private UserResponseDto user;
+    private ItemResponseDto item;
 
-//    @Test
-//    void updateItemTest() {
-//        UserDto user = userService.createUser(Generators.generateUser(1L));
-//        ItemDto itemDto = itemService.createItem(user.getId(), Generators.generateDto(1L));
-//
-//        ItemDto dto1 = Generators.generateDto(itemDto.getId());
-//        dto1.setName("New name");
-//
-//        ItemDto newItem = itemService.editItem(user.getId(), dto1, itemDto.getId());
-//
-//        assertEquals(itemDto.getId(), newItem.getId());
-//        assertEquals(dto1.getName(), newItem.getName());
-//        assertEquals(itemDto.getDescription(), newItem.getDescription());
-//        assertEquals(itemDto.getAvailable(), newItem.getAvailable());
-//    }
+    @BeforeEach
+    void setUp() {
+        user = userService.createUser(Generators.generateUserRequestDto());
+        item = itemService.createItem(user.getId(), Generators.generateItemRequest());
+    }
 
-//    @Test
-//    void updateItemWithWrongUserTest() {
-//        UserDto user = userService.createUser(Generators.generateUser(1L));
-//        ItemDto itemDto = itemService.createItem(user.getId(), Generators.generateDto(1L));
-//
-//        ItemDto dto1 = Generators.generateDto(itemDto.getId());
-//        dto1.setName("New name");
-//
-//        assertThrows(NotFoundException.class, () -> {
-//            itemService.editItem(user.getId() + 1, dto1, itemDto.getId());
-//        });
-//    }
+    @Test
+    void createAndGetItemTest() {
+        ItemResponseDto itemFromDb = itemService.getItemDtoById(item.getId());
 
-//    @Test
-//    void searchTest() {
-//        for (int i = 0;
-//             i < 10;
-//             i++) {
-//            UserDto user = userService.createUser(Generators.generateUser((long) i));
-//            itemService.createItem(user.getId(), Generators.generateDto(1L));
-//        }
-//        String text = "text";
-//        ItemDto dto = itemService.createItem(2L, Generators.generateItemDtoForSearch(1, text));
-//
-//        List<ItemDto> search = itemService.search(text);
-//
-//        assertEquals(1, search.size());
-//        assertEquals(dto, search.get(0));
-//    }
+        assertEquals(item, itemFromDb);
+    }
 
-//    @Test
-//    void searchWithUnableTest() {
-//        String text = "text";
-//        List<Long> id = new ArrayList<>();
-//        for (int i = 0;
-//             i < 10;
-//             i++) {
-//            UserDto user = userService.createUser(Generators.generateUser((long) i));
-//            boolean isText = false;
-//            ItemDto item;
-//            if (i == 2 || i == 8) {
-//                item = Generators.generateItemDtoForSearch(1, text);
-//                isText = true;
-//            } else {
-//                item = Generators.generateDto(1L);
-//            }
-//            if (i > 5) {
-//                item.setAvailable(false);
-//            }
-//            ItemDto created = itemService.createItem(user.getId(), item);
-//            if (isText) {
-//                id.add(created.getId());
-//            }
-//        }
-//
-//        List<ItemDto> search = itemService.search(text);
-//
-//        assertEquals(1, search.size());
-//        assertEquals(id.get(0), search.get(0).getId());
-//    }
+    @Test
+    void createItemWithWrongUserTest() {
+        assertThrows(NotFoundException.class, () -> {
+            itemService.createItem(user.getId() + 1, Generators.generateItemRequest());
+        });
+    }
+
+    @Test
+    void updateItemTest() {
+        ItemRequestDto toEdit = Generators.generateItemRequest();
+        toEdit.setName("New name");
+
+        ItemResponseDto newItem = itemService.editItem(user.getId(), toEdit, item.getId());
+
+        assertEquals(item.getId(), newItem.getId());
+        assertEquals(toEdit.getName(), newItem.getName());
+        assertEquals(item.getDescription(), newItem.getDescription());
+        assertEquals(item.getAvailable(), newItem.getAvailable());
+    }
+
+    @Test
+    void updateItemWithWrongUserTest() {
+        ItemRequestDto toEdit = Generators.generateItemRequest();
+        toEdit.setName("New name");
+
+        assertThrows(NotFoundException.class, () -> {
+            itemService.editItem(user.getId() + 1, toEdit, item.getId());
+        });
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void searchTest(String text) {
+        List<ItemResponseDto> dtos = itemService.search(text);
+
+        assertTrue(dtos.isEmpty());
+    }
 
 }

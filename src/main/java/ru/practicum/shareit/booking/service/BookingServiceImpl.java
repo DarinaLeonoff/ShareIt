@@ -9,11 +9,12 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.WrongRequestException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -33,33 +34,37 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto makeBooking(BookingRequestDto dto, long userId) {
-        UserDto user = userService.getUser(userId);
-        Item item = itemMapper.mapToItem(itemService.getItemDtoById(dto.getItemId()));
+        UserResponseDto user = userService.getUser(userId);
+        Item item = itemMapper.mapResponseToItem(itemService.getItemDtoById(dto.getItemId()));
+        if (itemService.isUserOwner(item.getId(), userId)) {
+            throw new WrongRequestException("Собственник не может бронитровать свои вещи.");
+        }
         if (!item.isAvailable()) {
             throw new WrongRequestException("Объект не доступен для бронирования.");
         }
 
         Booking booking = mapper.mapRequestDtoToBooking(dto);
-        booking.setBooker(userMapper.mapDtoToUser(user));
+        booking.setBooker(userMapper.mapResponseToUser(user));
         booking.setItem(item);
         booking.setStatus(BookingStatus.WAITING);
 
         return mapper.mapBookingToResponseDto(bookingRepository.save(booking));
     }
 
+    @Override
     public BookingResponseDto approveBooking(long userId, long bookingId, boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId);
-        Item item = booking.getItem();
-        if (userId != item.getOwnerId()) {
-            throw new WrongRequestException("Пользователь не является собственником и не может подтверждать бронь");
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено!"));
+        if (!itemService.isUserOwner(booking.getItem().getId(), userId)) {
+            throw new WrongRequestException("Пользователь не является собственником и не может подтверждать бронь. User id = " + userId);
         }
 
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
         return mapper.mapBookingToResponseDto(bookingRepository.save(booking));
     }
 
+    @Override
     public BookingResponseDto getBookingById(long userId, long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId);
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено!"));
         if (booking.getBooker().getId() != userId && booking.getItem().getOwnerId() != userId) {
             throw new WrongRequestException("У пользователя нет прав доступа к информации о бронировании.");
         }
@@ -68,7 +73,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> getAllUserBooking(long userId, BookingState state) {
-        UserDto user = userService.getUser(userId);
+        UserResponseDto user = userService.getUser(userId);
         List<Booking> bookings = bookingRepository.findByBookerId(userId);
 
         return getListByState(bookings, state);
@@ -76,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> getAllUserItemBooking(long userId, BookingState state) {
-        UserDto user = userService.getUser(userId);
+        UserResponseDto user = userService.getUser(userId);
         List<Booking> bookings = bookingRepository.findAllByOwnerId(userId);
 
         return getListByState(bookings, state);

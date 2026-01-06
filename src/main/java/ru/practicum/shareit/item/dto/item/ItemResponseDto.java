@@ -8,18 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.dto.BookingDateDto;
-import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
-
-import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Valid
-public class ItemWithCommentAndBookingDto {
-    @Min(1)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ItemResponseDto {
+    @Min(1L)
     private long id;
     @NotNull
     @NotBlank
@@ -29,9 +25,4 @@ public class ItemWithCommentAndBookingDto {
     private String description;
     @NotNull
     private Boolean available;
-
-    private BookingDateDto lastBooking;
-    private BookingDateDto nextBooking;
-    List<CommentResponseDto> comments;
-
 }

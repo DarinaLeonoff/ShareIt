@@ -5,17 +5,16 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.practicum.shareit.booking.dto.BookingDateDto;
-import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
+import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -27,22 +26,23 @@ class ItemWithCommentAndBookingDtoTest {
     @Autowired
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
+    private ItemWithCommentAndBookingDto dto;
+
+    @BeforeEach
+    void setUp() {
+        dto = Generators.generateItemWithCommentAndBooking(1L);
+        dto = setCommentAndBooking(dto);
+    }
+
     @Test
     void testValidDto() {
-        BookingDateDto booking = makeBookingDateDto();
-        CommentResponseDto comment = makeCommentResponseDto();
-
-        ItemWithCommentAndBookingDto dto = makeItemWithCommentAndBookingDto(booking, comment);
-        assertTrue(validator.validate(dto).isEmpty());
+        Set<ConstraintViolation<ItemWithCommentAndBookingDto>> violations = validator.validate(dto);
+        Assertions.assertTrue(violations.isEmpty());
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     void testInvalidName(String name) {
-        BookingDateDto booking = makeBookingDateDto();
-        CommentResponseDto comment = makeCommentResponseDto();
-
-        ItemWithCommentAndBookingDto dto = makeItemWithCommentAndBookingDto(booking, comment);
         dto.setName(name);
 
         Set<ConstraintViolation<ItemWithCommentAndBookingDto>> violations = validator.validate(dto);
@@ -52,10 +52,6 @@ class ItemWithCommentAndBookingDtoTest {
     @ParameterizedTest
     @NullAndEmptySource
     void testInvalidDescription(String description) {
-        BookingDateDto booking = makeBookingDateDto();
-        CommentResponseDto comment = makeCommentResponseDto();
-
-        ItemWithCommentAndBookingDto dto = makeItemWithCommentAndBookingDto(booking, comment);
         dto.setDescription(description);
 
         Set<ConstraintViolation<ItemWithCommentAndBookingDto>> violations = validator.validate(dto);
@@ -65,11 +61,6 @@ class ItemWithCommentAndBookingDtoTest {
     @ParameterizedTest
     @NullSource
     void testInvalidAvailable(Boolean b) {
-        // available не может быть null
-        BookingDateDto booking = makeBookingDateDto();
-        CommentResponseDto comment = makeCommentResponseDto();
-
-        ItemWithCommentAndBookingDto dto = makeItemWithCommentAndBookingDto(booking, comment);
         dto.setAvailable(b);
 
         Set<ConstraintViolation<ItemWithCommentAndBookingDto>> violations = validator.validate(dto);
@@ -104,19 +95,21 @@ class ItemWithCommentAndBookingDtoTest {
         assertTrue(validator.validate(dto).isEmpty());
     }
 
-    private BookingDateDto makeBookingDateDto() {
-        return BookingDateDto.builder()
-                .start(LocalDateTime.now())
-                .end(LocalDateTime.now().plusDays(1))
-                .build();
+    private ItemWithCommentAndBookingDto setComments(ItemWithCommentAndBookingDto dto) {
+        dto.setComments(List.of(Generators.generateCommentResponse()));
+        return dto;
     }
 
-    private CommentResponseDto makeCommentResponseDto() {
-        return CommentResponseDto.builder().id(1L).text("Хороший товар").authorName("Автор").created(LocalDateTime.now()).build();
+    private ItemWithCommentAndBookingDto setBooking(ItemWithCommentAndBookingDto dto) {
+        dto.setLastBooking(Generators.generateBookingDateDto());
+        dto.setNextBooking(Generators.generateBookingDateDto());
+        return dto;
     }
 
-    private ItemWithCommentAndBookingDto makeItemWithCommentAndBookingDto(
-            BookingDateDto booking, CommentResponseDto comment) {
-        return ItemWithCommentAndBookingDto.builder().id(1L).name("Название").description("Описание").available(true).lastBooking(booking).nextBooking(booking).comments(List.of(comment)).build();
+    private ItemWithCommentAndBookingDto setCommentAndBooking(ItemWithCommentAndBookingDto dto) {
+        dto = setBooking(dto);
+        dto = setComments(dto);
+
+        return dto;
     }
 }

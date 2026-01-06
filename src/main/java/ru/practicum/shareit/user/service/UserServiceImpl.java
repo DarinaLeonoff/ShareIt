@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserRequestDto;
+import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.mapper.UserMapperUtils;
 import ru.practicum.shareit.user.model.User;
@@ -25,23 +26,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto createUser(UserDto user) {
-        return mapper.mapUserToDto(userRepository.save(mapper.mapDtoToUser(user)));
+    public UserResponseDto createUser(UserRequestDto user) {
+        return mapper.mapUserToResponseDto(userRepository.save(mapper.mapDtoToUser(user)));
     }
 
     @Override
     @Transactional
-    public UserDto editUser(UserDto dto, long userId) {
+    public UserResponseDto editUser(UserRequestDto dto, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден."));
         User updated = UserMapperUtils.editUser(user, dto);
-        return mapper.mapUserToDto(userRepository.save(updated));
+        return mapper.mapUserToResponseDto(userRepository.save(updated));
     }
 
     @Override
-    public UserDto getUser(long userId) {
+    public UserResponseDto getUser(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден."));
         log.info("Getting user: {}", user);
-        return mapper.mapUserToDto(user);
+        return mapper.mapUserToResponseDto(user);
     }
 
     @Override

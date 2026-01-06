@@ -1,4 +1,4 @@
-package ru.practicum.shareit.userTests.model;
+package ru.practicum.shareit.userTests.dto;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -11,33 +11,34 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.Generators;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserRequestDto;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
-public class UserTest {
+public class UserDtoTest {
 
     @Autowired
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     public void validationTest() {
-        User user = Generators.generateUser(1L);
+        UserRequestDto user = Generators.generateUserRequestDto();
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(user);
         Assertions.assertTrue(violations.isEmpty());
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     public void validationNameTest(String name) {
-        User user = Generators.generateUser(1L);
+        UserRequestDto user = Generators.generateUserRequestDto();
         user.setName(name);
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(user);
         Assertions.assertFalse(violations.isEmpty());
     }
 
@@ -45,36 +46,32 @@ public class UserTest {
     @NullAndEmptySource
     @ValueSource(strings = {"emailyandex.ru", "email@", "@yandex.ru"})
     public void validationEmailTest(String email) {
-        User user = Generators.generateUser(1L);
+        UserRequestDto user = Generators.generateUserRequestDto();
         user.setEmail(email);
 
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(user);
         Assertions.assertFalse(violations.isEmpty());
     }
 
     @Test
     void testDefaultValues() {
-        User user = new User();
+        UserRequestDto user = new UserRequestDto();
 
         // Проверяем значения по умолчанию
-        assertEquals(0L, user.getId());
         assertNull(user.getName());
         assertNull(user.getEmail());
     }
 
     @Test
     void testSettersAndGetters() {
-        User user = new User();
+        UserRequestDto user = new UserRequestDto();
 
         // Устанавливаем значения
-        user.setId(123L);
         user.setName("Test Item");
         user.setEmail("Test@ya.ru");
 
         // Проверяем полученные значения
-        assertEquals(123L, user.getId());
         assertEquals("Test Item", user.getName());
         assertEquals("Test@ya.ru", user.getEmail());
     }
-
 }

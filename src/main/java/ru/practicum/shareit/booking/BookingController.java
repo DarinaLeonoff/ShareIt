@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -11,9 +12,7 @@ import ru.practicum.shareit.constants.Constants;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +21,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public BookingResponseDto makeBooking(@RequestBody BookingRequestDto dto, @RequestHeader(Constants.USER_ID_HEADER) long userId) {
         log.info("Start booking item {}", dto.getItemId());
         return bookingService.makeBooking(dto, userId);

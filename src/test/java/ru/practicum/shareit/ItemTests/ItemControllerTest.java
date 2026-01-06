@@ -1,7 +1,6 @@
 package ru.practicum.shareit.ItemTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,19 +8,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.Generators;
+import ru.practicum.shareit.constants.Constants;
+import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
+import ru.practicum.shareit.item.dto.comment.NewCommentDto;
+import ru.practicum.shareit.item.dto.item.ItemRequestDto;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.service.ItemService;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//TODO to be fixed next sprint
 @SpringBootTest
 @AutoConfigureMockMvc
 class ItemControllerTest {
@@ -32,70 +35,106 @@ class ItemControllerTest {
     @MockBean
     private ItemService itemService;
 
-    private ItemDto itemDto;
-    private ItemWithCommentAndBookingDto itemBookingDto;
-    private Long userId;
+    @Autowired
+    private ObjectMapper mapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeEach
-    void setUp() {
-        // Инициализация тестовых данных
-        itemDto = new ItemDto();
-        itemDto.setName("Test Item");
-        itemDto.setDescription("Description");
-        itemDto.setAvailable(true);
-
-        userId = 1L;
-
-        itemBookingDto = ItemWithCommentAndBookingDto.builder()
-                .name("Test Item")
-                .description("Description")
-                .available(true)
-                .lastBooking(null)
-                .nextBooking(null)
-                .comments(new ArrayList<>())
-                .build();
-    }
+    private ItemRequestDto item = Generators.generateItemRequest();
+    private long userId = 1L;
+    private long itemId = 1L;
+    private String url = "/items";
 
     @Test
     void testAddItem() throws Exception {
-        // Мокаем ответ сервиса
-        when(itemService.createItem(userId, itemDto)).thenReturn(itemDto);
-        mockMvc.perform(post("/items").header("X-Sharer-User-Id", userId).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(itemDto))).andExpect(status().isCreated()).andExpect(jsonPath("name").value("Test Item"));
+        ItemResponseDto resp = ItemResponseDto.builder()
+                .id(1L)
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(Boolean.TRUE)
+                .build();
+
+        when(itemService.createItem(userId, item))
+                .thenReturn(resp);
+
+        mockMvc.perform(post(url)
+                        .header(Constants.USER_ID_HEADER, userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(item)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value(resp.getId()))
+                .andExpect(jsonPath("name").value(resp.getName()))
+                .andExpect(jsonPath("description").value(resp.getDescription()))
+                .andExpect(jsonPath("available").value(resp.getAvailable()));
 
     }
 
-//    @Test
-//    void testGetAllUserItems() throws Exception {
-//        // Мокаем список элементов
-//        List<ItemWithCommentAndBookingDto> items = List.of(itemBookingDto);
-//        when(itemBookingService.getAllUserItems(userId)).thenReturn(items);
-//
-//        mockMvc.perform(get("/items").header("X-Sharer-User-Id", userId)).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value("Test Item"));
-//    }
+    @Test
+    void testGetAllUserItems() throws Exception {
+        List<ItemWithCommentAndBookingDto> items = List.of(Generators.generateItemWithCommentAndBooking(1L));
 
-//    @Test
-//    void testGetItemById() throws Exception {
-//        Long itemId = 1L;
-//        when(itemService.getItemWithCommentById(itemId)).thenReturn(itemDto);
-//
-//        mockMvc.perform(get("/items/{itemId}", itemId)).andExpect(status().isOk()).andExpect(jsonPath("name").value("Test Item"));
-//    }
+        when(itemService.getAllUserItems(userId))
+                .thenReturn(items);
+
+        mockMvc.perform(get(url)
+                        .header(Constants.USER_ID_HEADER, userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value(items.getFirst().getName()))
+                .andExpect(jsonPath("$[0].comments").isEmpty())
+                .andExpect(jsonPath("$[0].lastBooking").doesNotExist())
+                .andExpect(jsonPath("$[0].nextBooking").doesNotExist());
+    }
+
+    @Test
+    void testGetItem() throws Exception {
+        ItemWithCommentAndBookingDto item1 = Generators.generateItemWithCommentAndBooking(1L);
+        when(itemService.getItemWithCommentById(userId, itemId)).thenReturn(item1);
+
+        mockMvc.perform(get(url + "/{itemId}", itemId)
+                        .header(Constants.USER_ID_HEADER, userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(item1.getName()));
+    }
 
     @Test
     void testEditItem() throws Exception {
-        long itemId = 1L;
-        when(itemService.editItem(userId, itemDto, itemId)).thenReturn(itemDto);
+        ItemResponseDto resp = ItemResponseDto.builder()
+                .id(itemId)
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(true)
+                .build();
+        when(itemService.editItem(userId, item, itemId)).thenReturn(resp);
 
-        mockMvc.perform(patch("/items/{itemId}", itemId).header("X-Sharer-User-Id", userId).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(itemDto))).andExpect(status().isOk()).andExpect(jsonPath("name").value("Test Item"));
+        mockMvc.perform(patch(url + "/{itemId}", itemId)
+                        .header("X-Sharer-User-Id", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(item)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(resp.getName()));
     }
 
     @Test
     void testSearchItems() throws Exception {
-        List<ItemDto> searchResults = List.of(itemDto);
-        when(itemService.search("test")).thenReturn(searchResults);
+        List<ItemResponseDto> searchResults = List.of(Generators.generateItemResponse(itemId));
+        when(itemService.search(anyString())).thenReturn(searchResults);
 
-        mockMvc.perform(get("/items/search?text=test")).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value("Test Item"));
+        mockMvc.perform(get(url + "/search?text=test"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value(searchResults.getFirst().getName()));
+    }
+
+    @Test
+    void testAddComment() throws Exception {
+        NewCommentDto newCommentDto = Generators.generateNewComment();
+        CommentResponseDto comment = Generators.generateCommentResponse();
+
+        when(itemService.addComment(userId, itemId, newCommentDto))
+                .thenReturn(comment);
+
+        mockMvc.perform(post(url + "/{itemId}/comment", itemId)
+                        .header("X-Sharer-User-Id", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(newCommentDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath(".text").value(comment.getText()));
     }
 }

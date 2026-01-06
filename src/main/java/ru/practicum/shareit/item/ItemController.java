@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constants.Constants;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
-import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemRequestDto;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -27,7 +28,7 @@ public class ItemController {
     //Добавление вещи для бронирования
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto addItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemResponseDto addItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @Valid @RequestBody ItemRequestDto itemDto) {
         log.info("Post new item. Item is {}, owner id is {}", itemDto.getName(), userId);
         return itemService.createItem(userId, itemDto);
     }
@@ -48,18 +49,19 @@ public class ItemController {
 
     //Редактирование карточки вещи доступно только собственнику
     @PatchMapping("/{itemId}")
-    public ItemDto editItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @RequestBody ItemDto itemDto, @PathVariable long itemId) {
+    public ItemResponseDto editItem(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @RequestBody ItemRequestDto itemDto, @PathVariable long itemId) {
         log.info("Edit {}, owner id is {}", itemDto.getName(), userId);
         return itemService.editItem(userId, itemDto, itemId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam("text") String text) {
+    public List<ItemResponseDto> searchItems(@RequestParam("text") String text) {
         log.info("Getting items by request: {}", text);
         return itemService.search(text);
     }
 
     @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
     public CommentResponseDto addComment(@RequestHeader(Constants.USER_ID_HEADER) Long userId, @PathVariable long itemId, @Valid @RequestBody NewCommentDto dto) {
         log.info("User with id={}, comments item with id {}: {}", userId, itemId, dto.getText());
         return itemService.addComment(userId, itemId, dto);

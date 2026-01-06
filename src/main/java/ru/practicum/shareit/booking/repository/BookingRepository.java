@@ -7,12 +7,15 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
+
     Booking save(Booking booking);
 
-    Booking findById(long id);
+    @Override
+    Optional<Booking> findById(Long id);
 
     List<Booking> findByBookerId(long userId);
 

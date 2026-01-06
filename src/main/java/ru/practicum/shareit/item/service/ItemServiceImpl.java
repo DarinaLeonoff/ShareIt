@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDateDto;
@@ -13,14 +12,15 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.WrongRequestException;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
-import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemRequestDto;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
-import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.repository.DbItemRepository;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -34,7 +34,7 @@ import java.util.List;
 @Service
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository itemRepository;
+    private final DbItemRepository itemRepository;
     private final UserService userService;
     private final ItemMapper itemMapper;
     private final UserMapper userMapper;
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
 
-    public ItemServiceImpl(@Qualifier("DbItemRepo") ItemRepository itemRepository, UserService userService,
+    public ItemServiceImpl(DbItemRepository itemRepository, UserService userService,
                            ItemMapper itemMapper, UserMapper userMapper, CommentMapper commentMapper,
                            CommentRepository commentRepository, BookingRepository bookingRepository,
                            BookingMapper bookingMapper) {
@@ -59,42 +59,42 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto createItem(long userId, ItemDto itemDto) {
+    public ItemResponseDto createItem(long userId, ItemRequestDto itemDto) {
         userService.getUser(userId);
         Item item = itemMapper.mapToItem(itemDto);
         item.setOwnerId(userId);
-        return itemMapper.mapToDto(itemRepository.saveItem(item));
+        return itemMapper.mapItemToResponse(itemRepository.save(item));
     }
 
     @Override
-    public ItemDto getItemDtoById(long itemId) {
-        return itemMapper.mapToDto(itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с таким id(" + itemId + ") не найден")));
+    public ItemResponseDto getItemDtoById(long itemId) {
+        return itemMapper.mapItemToResponse(itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с таким id(" + itemId + ") не найден")));
     }
 
     @Override
     @Transactional
-    public ItemDto editItem(long userId, ItemDto itemDto, long itemId) {
+    public ItemResponseDto editItem(long userId, ItemRequestDto itemDto, long itemId) {
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет с таким id(" + itemId + ") не найден"));
         if (oldItem.getOwnerId() != userId) {
             log.info("Попытка редактировать карточку предмета другого пользователя");
             throw new NotFoundException("Пользователь не является собственником данной вещи");
         }
         Item newItem = itemMapper.updateItem(oldItem, itemDto);
-        return itemMapper.mapToDto(itemRepository.editItem(newItem));
+        return itemMapper.mapItemToResponse(itemRepository.save(newItem));
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemResponseDto> search(String text) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemMapper.mapItemsToItemDtos(itemRepository.searchByText(text));
+        return itemMapper.mapItemsToResponses(itemRepository.searchByText(text));
     }
 
     @Override
     public CommentResponseDto addComment(Long userId, long itemId, NewCommentDto dto) {
         checkUserHasBooking(userId, itemId);
-        Comment com = commentMapper.mapNewCommentToComment(dto, userMapper.mapDtoToUser(userService.getUser(userId)), itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден.")), LocalDateTime.now());
+        Comment com = commentMapper.mapNewCommentToComment(dto, userMapper.mapResponseToUser(userService.getUser(userId)), itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден.")), LocalDateTime.now());
         return commentMapper.mapCommentToResponse(commentRepository.save(com));
     }
 
@@ -118,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemWithCommentAndBookingDto getItemWithCommentById(long userId, long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Предмет не найден"));
 
         List<Booking> bookings = bookingRepository.findByItemId(itemId);
         List<Comment> comments = commentRepository.findByItemId(itemId);
@@ -135,6 +135,11 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
 
         return itemMapper.mapItemToItemWithBooking(item, lastNextBooking.get(0), lastNextBooking.get(1), itemComments);
+    }
+
+    @Override
+    public boolean isUserOwner(long itemId, long userId) {
+        return itemRepository.findById(itemId).orElseThrow().getOwnerId() == userId;
     }
 
     private void checkUserHasBooking(long userId, long itemId) {

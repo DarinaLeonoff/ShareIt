@@ -22,7 +22,7 @@ public class CommentTest {
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
-    void testValidComment() {
+    void trueIfValidComment() {
         // Создаем валидный объект Comment
         Item item = Item.builder().build();
         item.setId(1L);
@@ -38,7 +38,7 @@ public class CommentTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void testInvalidText(String text) {
+    void falseIfInvalidComment(String text) {
         Item item = Item.builder().build();
         item.setId(1L);
 
@@ -52,7 +52,7 @@ public class CommentTest {
     }
 
     @Test
-    void testNullItem() {
+    void falseIfItemIsNull() {
         // Проверяем, что item не может быть null
         User user = new User();
         user.setId(1L);
@@ -65,7 +65,7 @@ public class CommentTest {
     }
 
     @Test
-    void testNullUser() {
+    void falseIdUserIsNull() {
         // Проверяем, что user не может быть null
         Item item = Item.builder().build();
         item.setId(1L);
@@ -78,7 +78,7 @@ public class CommentTest {
     }
 
     @Test
-    void testNullCreated() {
+    void falseIfCreateDataIsNull() {
         // Проверяем, что created может быть null
         Item item = Item.builder().build();
         item.setId(1L);

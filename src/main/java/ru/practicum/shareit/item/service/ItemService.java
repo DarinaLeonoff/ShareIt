@@ -2,19 +2,20 @@ package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
-import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemRequestDto;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 
 import java.util.List;
 
 public interface ItemService {
-    ItemDto createItem(long userId, ItemDto itemDto);
+    ItemResponseDto createItem(long userId, ItemRequestDto itemDto);
 
-    ItemDto getItemDtoById(long itemId);
+    ItemResponseDto getItemDtoById(long itemId);
 
-    ItemDto editItem(long userId, ItemDto itemDto, long itemId);
+    ItemResponseDto editItem(long userId, ItemRequestDto itemDto, long itemId);
 
-    List<ItemDto> search(String text);
+    List<ItemResponseDto> search(String text);
 
     CommentResponseDto addComment(Long userId, long itemId, NewCommentDto dto);
 
@@ -22,4 +23,5 @@ public interface ItemService {
 
     ItemWithCommentAndBookingDto getItemWithCommentById(long useId, long itemId);
 
+    boolean isUserOwner(long itemId, long userId);
 }

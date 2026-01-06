@@ -4,13 +4,17 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Valid
-public class UserDto {
-    private long id;
-
+public class UserRequestDto {
     @NotNull
     @NotBlank(message = "Имя не может быть пустым")
     private String name;

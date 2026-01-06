@@ -29,5 +29,6 @@ public class Item {
 
     private boolean available = true;
 
+    @NotNull
     private long ownerId;
 }

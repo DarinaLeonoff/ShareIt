@@ -3,15 +3,21 @@ package ru.practicum.shareit.item.dto.item;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * TODO Sprint add-controllers.
+ * Where
  */
 @Data
 @Valid
-public class ItemDto {
-    private long id;
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ItemRequestDto {
+
     @NotNull
     @NotBlank
     private String name;
