@@ -12,6 +12,9 @@ import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dto.RequestItemDto;
+import ru.practicum.shareit.request.dto.RequestItemResponseDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.model.User;
@@ -160,6 +163,22 @@ public class Generators {
                 .start(LocalDateTime.now().minusDays(2))
                 .end(LocalDateTime.now().minusDays(1))
                 .build();
+    }
+
+    public static ItemRequest generateRequestItem(User user) {
+        return ItemRequest.builder()
+                .user(user)
+                .description("test " + random.nextInt())
+                .created(LocalDateTime.now())
+                .build();
+    }
+
+    public static RequestItemDto generateRequestItemDto() {
+        return RequestItemDto.builder().description("test " + random.nextInt()).build();
+    }
+
+    public static RequestItemResponseDto genereteRequestResponse() {
+        return RequestItemResponseDto.builder().id(1L).description("test " + random.nextInt()).created(LocalDateTime.now()).build();
     }
 
 }
