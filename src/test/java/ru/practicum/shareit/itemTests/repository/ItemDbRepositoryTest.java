@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.DbItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.DbUserRepository;
 
@@ -21,6 +23,8 @@ public class ItemDbRepositoryTest {
     private DbItemRepository itemRepository;
     @Autowired
     private DbUserRepository userRepository;
+    @Autowired
+    private RequestRepository requestRepository;
 
     private User testUser;
     private Item testItem;
@@ -84,6 +88,23 @@ public class ItemDbRepositoryTest {
         List<Item> items = itemRepository.searchByText("Yandex");
 
         assertTrue(items.isEmpty());
+    }
+
+    @Test
+    void testGetByRequestId() {
+        ItemRequest request = requestRepository.save(Generators.generateRequestItem(testUser));
+        ItemRequest request2 = requestRepository.save(Generators.generateRequestItem(testUser));
+        ItemRequest request3 = requestRepository.save(Generators.generateRequestItem(testUser));
+
+        Item item1 = itemRepository.save(Generators.generateItemWithRequest(testUser.getId(), request.getId()));
+        Item item2 = itemRepository.save(Generators.generateItemWithRequest(testUser.getId(), request2.getId()));
+        Item item3 = itemRepository.save(Generators.generateItemWithRequest(testUser.getId(), request3.getId()));
+
+        List<Long> ids = List.of(request.getId(), request2.getId());
+
+        List<Item> result = itemRepository.findAllByRequestIdIn(ids);
+        assertEquals(2, result.size());
+        assertEquals(1, result.stream().filter(i -> i.getRequestId() == request.getId()).toList().size());
     }
 
     private void fillDbForSearch() {

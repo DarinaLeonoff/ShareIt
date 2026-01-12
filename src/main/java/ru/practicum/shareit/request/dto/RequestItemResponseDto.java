@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.dto.item.AnswerDto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,5 +26,6 @@ public class RequestItemResponseDto {
     @NotNull
     private LocalDateTime created;
 
-//    private List<Answer> answers;
+    @Builder.Default
+    private List<AnswerDto> items = new ArrayList<>();
 }

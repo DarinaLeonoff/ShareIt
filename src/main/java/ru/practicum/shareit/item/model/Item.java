@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,4 +32,8 @@ public class Item {
 
     @NotNull
     private long ownerId;
+
+    @Nullable
+    @Column(name = "request_id")
+    private Long requestId;
 }

@@ -60,4 +60,21 @@ public class ItemDtoTest {
         Set<ConstraintViolation<ItemRequestDto>> violations = validator.validate(dto);
         Assertions.assertFalse(violations.isEmpty());
     }
+
+    @ParameterizedTest
+    @NullSource
+    public void validateNullRequestId(Long requestId) {
+        dto.setRequestId(requestId);
+
+        Set<ConstraintViolation<ItemRequestDto>> violations = validator.validate(dto);
+        Assertions.assertTrue(violations.isEmpty());
+    }
+
+    @Test
+    public void validateRequestId() {
+        dto.setRequestId(2L);
+
+        Set<ConstraintViolation<ItemRequestDto>> violations = validator.validate(dto);
+        Assertions.assertTrue(violations.isEmpty());
+    }
 }

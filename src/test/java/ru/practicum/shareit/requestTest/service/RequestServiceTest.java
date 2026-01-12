@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Generators;
+import ru.practicum.shareit.item.dto.item.ItemResponseDto;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.RequestItemDto;
 import ru.practicum.shareit.request.dto.RequestItemResponseDto;
 import ru.practicum.shareit.request.repository.RequestRepository;
@@ -32,11 +35,15 @@ public class RequestServiceTest {
     private RequestService requestService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ItemService itemService;
 
     @Mock
     private RequestRepository requestRepository;
     @Mock
     private DbUserRepository userRepository;
+    @Mock
+    private ItemRepository itemRepository;
 
     private UserResponseDto user;
 
@@ -55,17 +62,20 @@ public class RequestServiceTest {
 
     @Test
     void getUserRequestTest() {
-        RequestItemDto req = Generators.generateRequestItemDto();
-        RequestItemResponseDto res = requestService.makeRequest(user.getId(), req);
+        RequestItemResponseDto res = requestService.makeRequest(user.getId(), Generators.generateRequestItemDto());
+        ItemResponseDto item1 = itemService.createItem(user.getId(), Generators.generateItemRequest(res.getId()));
 
-        RequestItemDto req2 = Generators.generateRequestItemDto();
-        RequestItemResponseDto res2 = requestService.makeRequest(user.getId(), req2);
+        RequestItemResponseDto res2 = requestService.makeRequest(user.getId(), Generators.generateRequestItemDto());
+        ItemResponseDto item2 = itemService.createItem(user.getId(), Generators.generateItemRequest(res2.getId()));
 
         UserResponseDto user2 = userService.createUser(Generators.generateUserRequestDto());
         requestService.makeRequest(user2.getId(), Generators.generateRequestItemDto());
 
         List<RequestItemResponseDto> result = requestService.getUserRequest(user.getId());
         assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getItems().size());
+        assertEquals(1, result.get(1).getItems().size());
+
     }
 
     @Test

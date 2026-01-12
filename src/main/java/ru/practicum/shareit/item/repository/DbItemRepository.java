@@ -28,4 +28,6 @@ public interface DbItemRepository extends JpaRepository<Item, Long> {
                 AND i.available = true
             """)
     List<Item> searchByText(@Param("text") String text);
+
+    List<Item> findAllByRequestIdIn(List<Long> requestIds);
 }

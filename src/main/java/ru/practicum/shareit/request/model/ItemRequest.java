@@ -34,5 +34,4 @@ public class ItemRequest {
     @Column(name = "created")
     private LocalDateTime created;
 
-//    private List<Answer> answers;
 }

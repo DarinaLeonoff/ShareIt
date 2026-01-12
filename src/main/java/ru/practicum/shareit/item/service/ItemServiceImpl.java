@@ -12,6 +12,7 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.WrongRequestException;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
+import ru.practicum.shareit.item.dto.item.AnswerDto;
 import ru.practicum.shareit.item.dto.item.ItemRequestDto;
 import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
@@ -25,10 +26,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -140,6 +138,17 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public boolean isUserOwner(long itemId, long userId) {
         return itemRepository.findById(itemId).orElseThrow().getOwnerId() == userId;
+    }
+
+    @Override
+    public Map<Long, List<AnswerDto>> getItemAnswerForRequests(List<Long> requestIds) {
+        List<Item> answers = itemRepository.findAllByRequestIdIn(requestIds);
+        Map<Long, List<AnswerDto>> result = new HashMap<>();
+        for (Long id : requestIds) {
+            result.put(id, answers.stream().filter(i -> i.getRequestId() == id)
+                    .map(itemMapper::mapItemToAnswer).toList());
+        }
+        return result;
     }
 
     private void checkUserHasBooking(long userId, long itemId) {

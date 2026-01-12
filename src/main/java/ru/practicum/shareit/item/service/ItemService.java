@@ -2,11 +2,13 @@ package ru.practicum.shareit.item.service;
 
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
 import ru.practicum.shareit.item.dto.comment.NewCommentDto;
+import ru.practicum.shareit.item.dto.item.AnswerDto;
 import ru.practicum.shareit.item.dto.item.ItemRequestDto;
 import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ItemService {
     ItemResponseDto createItem(long userId, ItemRequestDto itemDto);
@@ -24,4 +26,6 @@ public interface ItemService {
     ItemWithCommentAndBookingDto getItemWithCommentById(long useId, long itemId);
 
     boolean isUserOwner(long itemId, long userId);
+
+    Map<Long, List<AnswerDto>> getItemAnswerForRequests(List<Long> requestIds);
 }

@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDateDto;
 import ru.practicum.shareit.item.dto.comment.CommentResponseDto;
+import ru.practicum.shareit.item.dto.item.AnswerDto;
 import ru.practicum.shareit.item.dto.item.ItemRequestDto;
 import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.dto.item.ItemWithCommentAndBookingDto;
@@ -29,6 +30,7 @@ public interface ItemMapper {
     @Mapping(target = "comments", source = "comments")
     ItemWithCommentAndBookingDto mapItemToItemWithBooking(Item item, BookingDateDto lastBooking, BookingDateDto nextBooking, List<CommentResponseDto> comments);
 
+    AnswerDto mapItemToAnswer(Item item);
 
     default Item updateItem(Item item, ItemRequestDto dto) {
         if (dto.getName() != null && !dto.getName().isBlank()) {
@@ -44,5 +46,4 @@ public interface ItemMapper {
         }
         return item;
     }
-
 }

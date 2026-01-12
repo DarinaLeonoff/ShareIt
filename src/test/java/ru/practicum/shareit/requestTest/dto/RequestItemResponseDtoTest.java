@@ -29,6 +29,7 @@ public class RequestItemResponseDtoTest {
                 .build();
         Set<ConstraintViolation<RequestItemResponseDto>> violations = validator.validate(res);
         Assertions.assertTrue(violations.isEmpty());
+        Assertions.assertTrue(res.getItems().isEmpty());
     }
 
     @ParameterizedTest

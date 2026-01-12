@@ -45,6 +45,16 @@ public class Generators {
                 .build();
     }
 
+    public static Item generateItemWithRequest(long userId, long requestId) {
+        return Item.builder()
+                .name("Test " + random.nextInt())
+                .description("Desc")
+                .available(true)
+                .ownerId(userId)
+                .requestId(requestId)
+                .build();
+    }
+
     public static User generateUser(Long i) {
         User user = new User();
         user.setId(i);
@@ -104,6 +114,15 @@ public class Generators {
                 .name("Item")
                 .description("Description")
                 .available(true)
+                .build();
+    }
+
+    public static ItemRequestDto generateItemRequest(long requestId) {
+        return ItemRequestDto.builder()
+                .name("Item")
+                .description("Description")
+                .available(true)
+                .requestId(requestId)
                 .build();
     }
 

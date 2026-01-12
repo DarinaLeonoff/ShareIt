@@ -12,10 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.dto.item.AnswerDto;
 import ru.practicum.shareit.item.dto.item.ItemRequestDto;
 import ru.practicum.shareit.item.dto.item.ItemResponseDto;
 import ru.practicum.shareit.item.repository.DbItemRepository;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.request.dto.RequestItemResponseDto;
+import ru.practicum.shareit.request.repository.RequestRepository;
+import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.repository.DbUserRepository;
 import ru.practicum.shareit.user.service.UserServiceImpl;
@@ -33,11 +37,15 @@ public class ItemServiceImplTest {
     private ItemServiceImpl itemService;
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private RequestService requestService;
 
     @Mock
     private DbUserRepository userRepository;
     @Mock
     private DbItemRepository itemRepository;
+    @Mock
+    private RequestRepository requestRepository;
 
     private UserResponseDto user;
     private ItemResponseDto item;
@@ -91,6 +99,29 @@ public class ItemServiceImplTest {
         List<ItemResponseDto> dtos = itemService.search(text);
 
         assertTrue(dtos.isEmpty());
+    }
+
+    @Test
+    void getAnswerForRequestTest() {
+        RequestItemResponseDto request = requestService.makeRequest(user.getId(), Generators.generateRequestItemDto());
+
+        ItemResponseDto item = itemService.createItem(user.getId(),
+                ItemRequestDto.builder()
+                        .name("Name")
+                        .description("Desc")
+                        .available(true)
+                        .requestId(request.getId())
+                        .build());
+
+        AnswerDto answerExpected = AnswerDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .ownerId(user.getId())
+                .build();
+
+        AnswerDto result = itemService.getItemAnswerForRequests(List.of(request.getId())).get(request.getId()).get(0);
+
+        assertEquals(answerExpected, result);
     }
 
 }

@@ -17,6 +17,8 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest
 public class ItemRequestTest {
     @Autowired
@@ -31,7 +33,7 @@ public class ItemRequestTest {
                 .build();
 
         Set<ConstraintViolation<ItemRequest>> violations = validator.validate(req);
-        Assertions.assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty());
     }
 
     @ParameterizedTest

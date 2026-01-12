@@ -16,6 +16,7 @@ public class ItemTest {
         assertEquals(0L, item.getId());
         assertNull(item.getName());
         assertNull(item.getDescription());
+        assertNull(item.getRequestId());
         assertTrue(item.isAvailable());
         assertEquals(0L, item.getOwnerId());
     }
@@ -30,6 +31,7 @@ public class ItemTest {
         item.setDescription("Description of test item");
         item.setAvailable(false);
         item.setOwnerId(456L);
+        item.setRequestId(1L);
 
         // Проверяем полученные значения
         assertEquals(123L, item.getId());
@@ -37,5 +39,6 @@ public class ItemTest {
         assertEquals("Description of test item", item.getDescription());
         assertFalse(item.isAvailable());
         assertEquals(456L, item.getOwnerId());
+        assertEquals(1L, item.getRequestId());
     }
 }

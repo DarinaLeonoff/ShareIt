@@ -3,6 +3,8 @@ package ru.practicum.shareit.request.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.item.dto.item.AnswerDto;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.RequestItemDto;
 import ru.practicum.shareit.request.dto.RequestItemResponseDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
@@ -14,6 +16,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,6 +32,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ItemService itemService;
 
     @Override
     public RequestItemResponseDto makeRequest(long userId, RequestItemDto req) {
@@ -43,16 +48,31 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<RequestItemResponseDto> getUserRequest(long userId) {
         userService.getUser(userId);
-        return requestRepository.findAllByUser_IdOrderByCreatedDesc(userId).stream().map(mapper::mapItemRequestToResponse).toList();
+        return setAnswers(requestRepository
+                .findAllByUser_IdOrderByCreatedDesc(userId).stream()
+                .map(mapper::mapItemRequestToResponse).toList());
     }
 
     @Override
     public List<RequestItemResponseDto> getAllRequest() {
-        return requestRepository.findAllByOrderByCreatedDesc().stream().map(mapper::mapItemRequestToResponse).toList();
+        return setAnswers(requestRepository.findAllByOrderByCreatedDesc().stream()
+                .map(mapper::mapItemRequestToResponse).toList());
     }
 
     @Override
     public RequestItemResponseDto getRequest(long requestId) {
-        return mapper.mapItemRequestToResponse(requestRepository.findById(requestId));
+        return setAnswers(List.of(mapper.mapItemRequestToResponse(requestRepository.findById(requestId))))
+                .getFirst();
     }
+
+    private List<RequestItemResponseDto> setAnswers(List<RequestItemResponseDto> requests) {
+        Map<Long, List<AnswerDto>> answers = itemService
+                .getItemAnswerForRequests(requests.stream().map(RequestItemResponseDto::getId).toList());
+
+        for (RequestItemResponseDto request : requests) {
+            request.setItems(answers.get(request.getId()));
+        }
+        return requests;
+    }
+
 }
