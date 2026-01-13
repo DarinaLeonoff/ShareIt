@@ -144,7 +144,7 @@ public class ItemServiceImpl implements ItemService {
     public Map<Long, List<AnswerDto>> getItemAnswerForRequests(List<Long> requestIds) {
         List<Item> answers = itemRepository.findAllByRequestIdIn(requestIds);
         Map<Long, List<AnswerDto>> result = new HashMap<>();
-        for (Long id : requestIds) {
+        for (long id : requestIds) {
             result.put(id, answers.stream().filter(i -> i.getRequestId() == id)
                     .map(itemMapper::mapItemToAnswer).toList());
         }
