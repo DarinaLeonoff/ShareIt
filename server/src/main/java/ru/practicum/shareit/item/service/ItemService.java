@@ -19,7 +19,7 @@ public interface ItemService {
 
     List<ItemResponseDto> search(String text);
 
-    CommentResponseDto addComment(Long userId, long itemId, NewCommentDto dto);
+    CommentResponseDto addComment(long userId, long itemId, NewCommentDto dto);
 
     List<ItemWithCommentAndBookingDto> getAllUserItems(long userId);
 

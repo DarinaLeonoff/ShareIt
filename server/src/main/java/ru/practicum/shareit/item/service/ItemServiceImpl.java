@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentResponseDto addComment(Long userId, long itemId, NewCommentDto dto) {
+    public CommentResponseDto addComment(long userId, long itemId, NewCommentDto dto) {
         checkUserHasBooking(userId, itemId);
         Comment com = commentMapper.mapNewCommentToComment(dto, userMapper.mapResponseToUser(userService.getUser(userId)), itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Пользователь не найден.")), LocalDateTime.now());
         return commentMapper.mapCommentToResponse(commentRepository.save(com));
