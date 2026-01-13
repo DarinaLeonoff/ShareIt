@@ -19,8 +19,6 @@ public interface ItemMapper {
     @Mapping(target = "ownerId", source = "userId")
     Item mapRequestToItem(ItemRequestDto dto, long userId);
 
-    Item mapResponseToItem(ItemResponseDto dto);
-
     ItemResponseDto mapItemToResponse(Item item);
 
     @Mapping(target = "lastBooking", source = "lastBooking")

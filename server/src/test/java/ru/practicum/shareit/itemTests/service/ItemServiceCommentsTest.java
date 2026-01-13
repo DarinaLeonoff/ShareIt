@@ -21,6 +21,8 @@ import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.repository.DbUserRepository;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -80,6 +82,14 @@ public class ItemServiceCommentsTest {
 
         assertEquals(booking.getStart(), fullItem.getLastBooking().getStart());
         assertEquals(booking.getEnd(), fullItem.getLastBooking().getEnd());
+    }
+
+    @Test
+    void getAllUserItemsTets() {
+        List<ItemWithCommentAndBookingDto> res = itemService.getAllUserItems(owner.getId());
+
+        assertEquals(1, res.size());
+        assertEquals(item.getId(), res.get(0).getId());
     }
 
 }

@@ -75,23 +75,6 @@ public class ItemMapperTest {
     }
 
     @Test
-    void convertResponseToItemTest() {
-        ItemResponseDto resp = ItemResponseDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.isAvailable())
-                .build();
-
-        Item result = itemMapper.mapResponseToItem(resp);
-
-        assertEquals(item.getId(), result.getId());
-        assertEquals(item.getName(), result.getName());
-        assertEquals(item.getDescription(), result.getDescription());
-        assertEquals(item.isAvailable(), result.isAvailable());
-    }
-
-    @Test
     void convertItemToResponseTest() {
         ItemResponseDto expected = ItemResponseDto.builder()
                 .id(item.getId())

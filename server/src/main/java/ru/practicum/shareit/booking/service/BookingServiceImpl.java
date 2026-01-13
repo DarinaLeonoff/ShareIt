@@ -11,8 +11,8 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.WrongRequestException;
-import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.DbItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -26,18 +26,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
+    private final DbItemRepository itemRepository;
     private final UserService userService;
     private final ItemService itemService;
     private final BookingMapper mapper;
     private final UserMapper userMapper;
-    private final ItemMapper itemMapper;
 
     @Override
     public BookingResponseDto makeBooking(BookingRequestDto dto, long userId) {
         UserResponseDto user = userService.getUser(userId);
-        Item item = itemMapper.mapResponseToItem(itemService.getItemDtoById(dto.getItemId()));
+        Item item = itemRepository.findById(dto.getItemId()).orElseThrow(() -> new NotFoundException("Объект не найден"));
         if (itemService.isUserOwner(item.getId(), userId)) {
-            throw new WrongRequestException("Собственник не может бронитровать свои вещи.");
+            throw new WrongRequestException("Собственник не может бронировать свои вещи.");
         }
         if (!item.isAvailable()) {
             throw new WrongRequestException("Объект не доступен для бронирования.");
@@ -65,6 +65,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto getBookingById(long userId, long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено!"));
+        log.info("Owner is {}, booker is {}", booking.getItem().getOwnerId(), booking.getBooker());
         if (booking.getBooker().getId() != userId && booking.getItem().getOwnerId() != userId) {
             throw new WrongRequestException("У пользователя нет прав доступа к информации о бронировании.");
         }

@@ -93,11 +93,16 @@ public class ItemServiceImplTest {
         });
     }
 
+    @Test
+    void searchTest() {
+        List<ItemResponseDto> dtos = itemService.search(item.getName());
+        assertFalse(dtos.isEmpty());
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
-    void searchTest(String text) {
+    void searchEmptyTextTest(String text) {
         List<ItemResponseDto> dtos = itemService.search(text);
-
         assertTrue(dtos.isEmpty());
     }
 
@@ -123,5 +128,6 @@ public class ItemServiceImplTest {
 
         assertEquals(answerExpected, result);
     }
+
 
 }

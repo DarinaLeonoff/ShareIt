@@ -99,7 +99,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemWithCommentAndBookingDto> getAllUserItems(long userId) {
         List<Booking> bookings = bookingRepository.findByBookerId(userId);
-        log.info("All bookings: {}", bookings);
         List<Comment> comments = commentRepository.findAllByItemOwnerId(userId);
         List<ItemWithCommentAndBookingDto> items = itemRepository.findByOwnerId(userId).stream()
                 .map(i -> {
