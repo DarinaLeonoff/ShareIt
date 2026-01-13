@@ -8,7 +8,6 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.mapper.UserMapperUtils;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.DbUserRepository;
 
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDto editUser(UserRequestDto dto, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден."));
-        User updated = UserMapperUtils.editUser(user, dto);
+        User updated = mapper.editUser(user, dto);
         return mapper.mapUserToResponseDto(userRepository.save(updated));
     }
 

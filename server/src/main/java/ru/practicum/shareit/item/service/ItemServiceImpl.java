@@ -59,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemResponseDto createItem(long userId, ItemRequestDto itemDto) {
         userService.getUser(userId);
-        Item item = itemMapper.mapToItem(itemDto);
+        Item item = itemMapper.mapRequestToItem(itemDto, userId);
         item.setOwnerId(userId);
         return itemMapper.mapItemToResponse(itemRepository.save(item));
     }

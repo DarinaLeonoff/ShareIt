@@ -14,11 +14,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
-    ItemRequestDto mapToDto(Item item);
-
     List<ItemResponseDto> mapItemsToResponses(List<Item> items);
 
-    Item mapToItem(ItemRequestDto dto);
+    @Mapping(target = "ownerId", source = "userId")
+    Item mapRequestToItem(ItemRequestDto dto, long userId);
 
     Item mapResponseToItem(ItemResponseDto dto);
 

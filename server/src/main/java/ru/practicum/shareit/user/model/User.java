@@ -1,19 +1,19 @@
 package ru.practicum.shareit.user.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * TODO Sprint add-controllers.
  */
-
+@Builder
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

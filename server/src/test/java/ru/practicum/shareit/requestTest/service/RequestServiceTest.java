@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.Generators;
 import ru.practicum.shareit.item.dto.item.ItemResponseDto;
-import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.item.repository.DbItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.RequestItemDto;
 import ru.practicum.shareit.request.dto.RequestItemResponseDto;
@@ -43,7 +43,7 @@ public class RequestServiceTest {
     @Mock
     private DbUserRepository userRepository;
     @Mock
-    private ItemRepository itemRepository;
+    private DbItemRepository itemRepository;
 
     private UserResponseDto user;
 

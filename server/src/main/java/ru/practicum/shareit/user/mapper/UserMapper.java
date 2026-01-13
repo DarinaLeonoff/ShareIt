@@ -12,4 +12,20 @@ public interface UserMapper {
     UserResponseDto mapUserToResponseDto(User user);
 
     User mapResponseToUser(UserResponseDto dto);
+
+    default User editUser(User user, UserRequestDto userDto) {
+        String email = userDto.getEmail();
+        if (email != null && !email.isBlank()
+                && !email.equals(user.getEmail())) {
+            user.setEmail(email);
+        }
+
+        String name = userDto.getName();
+        if (name != null && !name.isBlank() && !name.equals(user.getName())) {
+            user.setName(name);
+        }
+
+        return user;
+    }
 }
+
