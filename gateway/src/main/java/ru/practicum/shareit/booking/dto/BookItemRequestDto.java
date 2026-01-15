@@ -22,9 +22,9 @@ public class BookItemRequestDto {
     @Future
     private LocalDateTime end;
 
-    @AssertTrue(message = "Дата окончания должна быть позже даты начала")
-    public boolean isValidDateRange() {
-        return start.isBefore(end);
-    }
+//    @AssertTrue(message = "Дата окончания должна быть позже даты начала")
+//    public boolean isValidDateRange() {
+//        return start.isBefore(end);
+//    }
 }
 
