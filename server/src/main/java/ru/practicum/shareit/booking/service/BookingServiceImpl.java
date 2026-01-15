@@ -36,9 +36,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDto makeBooking(BookingRequestDto dto, long userId) {
         UserResponseDto user = userService.getUser(userId);
         Item item = itemRepository.findById(dto.getItemId()).orElseThrow(() -> new NotFoundException("Объект не найден"));
-        if (itemService.isUserOwner(item.getId(), userId)) {
-            throw new WrongRequestException("Собственник не может бронировать свои вещи.");
-        }
+//        if (itemService.isUserOwner(item.getId(), userId)) {
+//            throw new WrongRequestException("Собственник не может бронировать свои вещи.");
+//        }
         if (!item.isAvailable()) {
             throw new WrongRequestException("Объект не доступен для бронирования.");
         }

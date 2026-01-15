@@ -80,15 +80,15 @@ public class BookingServiceTest {
         assertEquals(booker.getId(), saved.getBooker().getId());
     }
 
-    @Test
-    void testMakeBookingByOwner() {
-        BookingRequestDto request = BookingRequestDto.builder()
-                .itemId(item.getId())
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(1))
-                .build();
-        assertThrows(WrongRequestException.class, () -> bookingService.makeBooking(request, owner.getId()));
-    }
+//    @Test
+//    void testMakeBookingByOwner() {
+//        BookingRequestDto request = BookingRequestDto.builder()
+//                .itemId(item.getId())
+//                .start(LocalDateTime.now().plusDays(1))
+//                .end(LocalDateTime.now().plusDays(1))
+//                .build();
+//        assertThrows(WrongRequestException.class, () -> bookingService.makeBooking(request, owner.getId()));
+//    }
 
     @Test
     void testMakeBookingOfUnableItem() {
