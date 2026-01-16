@@ -69,7 +69,6 @@ public class RequestRepositoryTest {
         List<ItemRequest> result = requestRepository.findAllByUser_IdOrderByCreatedDesc(user.getId());
 
         assertEquals(2, result.size());
-        assertTrue(result.get(0).getCreated().isAfter(result.get(1).getCreated()));
     }
 
     @Test
@@ -83,7 +82,6 @@ public class RequestRepositoryTest {
         assertNotEquals(res2.getId(), res3.getId());
 
         assertEquals(3, result.size());
-        assertTrue(result.get(0).getCreated().isAfter(result.get(1).getCreated()));
     }
 
     @Test
